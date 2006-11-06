@@ -227,3 +227,7 @@ module PluginAWeek #:nodoc:
     end
   end
 end
+
+ActionController::Base.class_eval do
+  helper PluginAWeek::Helpers::TableHelper
+end
