@@ -157,7 +157,7 @@ module PluginAWeek #:nodoc:
           html_options.set_or_append(:class, 'alternate') if options[:alternate]
           @html_options = html_options
           
-          @columns = OrderedHash.new
+          @columns = ActiveSupport::OrderedHash.new
           @no_content_caption = "Nothing to see here... move along"
           
           yield self if block_given?
