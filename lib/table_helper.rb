@@ -135,7 +135,6 @@ module PluginAWeek #:nodoc:
       #
       #
       class CollectionTable
-        include ApplicationHelper
         include ActionView::Helpers::TagHelper
         
         attr_accessor :no_content_caption
