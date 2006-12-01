@@ -27,59 +27,59 @@ module PluginAWeek #:nodoc:
     # 
     #  <table cellpadding="0" cellspacing="0" class="summary alternate" id="posts">
     #  <thead>
-    #   <tr class="header row">
-    #     <th class="title" scope="col">Title</th><th class="category" scope="col">Category</th>
-    #     <th class="author" scope="col">Author</th><th class="publish_date" scope="col">Date<br \>Published</th>
-    #     <th class="num_comments" scope="col"># Comments</th>
-    #     <th class="num_trackbacks" scope="col"># Trackbacks</th>
-    #   </tr>
-    #   </thead>
-    #   <tbody>
-    #     <tr class="row">
-    #       <td class="title"><div class="wrapped">Open-source projects: The good, the bad, and the ugly</div></td>
-    #       <td class="category">General</td>
-    #       <td class="author">John Doe</td>
-    #       <td class="publish_date">23 days</td>
-    #       <td class="num_comments">-</td>
-    #       <td class="num_trackbacks">-</td>
-    #     </tr>
-    #     <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
-    #     <tr class="alt_row">
-    #       <td class="title"><div class="wrapped">5 reasons you should care about Rails</div></td>
-    #       <td class="category">Rails</td><td class="author">John Q. Public</td>
-    #       <td class="publish_date">21 days</td>
-    #       <td class="num_comments">-</td>
-    #       <td class="num_trackbacks">-</td>
-    #     </tr>
-    #     <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
-    #     <tr class="row">
-    #       <td class="title"><div class="wrapped">Deprecation: Stop digging yourself a hole</div></td>
-    #       <td class="category">Rails</td>
-    #       <td class="author">Jane Doe</td>
-    #       <td class="publish_date">17 days</td>
-    #       <td class="num_comments">-</td>
-    #       <td class="num_trackbacks">-</td>
-    #     </tr>
-    #     <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
-    #     <tr class="alt_row">
-    #       <td class="title"><div class="wrapped">Jumpstart your Rails career at RailsConf 2007</div></td>
-    #       <td class="category">Conferences</td>
-    #       <td class="author">Jane Doe</td>
-    #       <td class="publish_date">4 days</td>
-    #       <td class="num_comments">-</td>
-    #       <td class="num_trackbacks">-</td>
-    #     </tr>
-    #     <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
-    #     <tr class="row">
-    #       <td class="title"><div class="wrapped">Getting some REST</div></td>
-    #       <td class="category">Rails</td>
-    #       <td class="author">John Doe</td>
-    #       <td class="publish_date">about 18 hours</td>
-    #       <td class="num_comments">-</td>
-    #       <td class="num_trackbacks">-</td>
-    #     </tr>
-    #   </tbody>
-    #   </table>
+    #    <tr class="header row">
+    #      <th class="title" scope="col">Title</th><th class="category" scope="col">Category</th>
+    #      <th class="author" scope="col">Author</th><th class="publish_date" scope="col">Date<br \>Published</th>
+    #      <th class="num_comments" scope="col"># Comments</th>
+    #      <th class="num_trackbacks" scope="col"># Trackbacks</th>
+    #    </tr>
+    #  </thead>
+    #  <tbody>
+    #    <tr class="row">
+    #      <td class="title"><div class="wrapped">Open-source projects: The good, the bad, and the ugly</div></td>
+    #      <td class="category">General</td>
+    #      <td class="author">John Doe</td>
+    #      <td class="publish_date">23 days</td>
+    #      <td class="num_comments">-</td>
+    #      <td class="num_trackbacks">-</td>
+    #    </tr>
+    #    <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
+    #    <tr class="alt_row">
+    #      <td class="title"><div class="wrapped">5 reasons you should care about Rails</div></td>
+    #      <td class="category">Rails</td><td class="author">John Q. Public</td>
+    #      <td class="publish_date">21 days</td>
+    #      <td class="num_comments">-</td>
+    #      <td class="num_trackbacks">-</td>
+    #    </tr>
+    #    <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
+    #    <tr class="row">
+    #      <td class="title"><div class="wrapped">Deprecation: Stop digging yourself a hole</div></td>
+    #      <td class="category">Rails</td>
+    #      <td class="author">Jane Doe</td>
+    #      <td class="publish_date">17 days</td>
+    #      <td class="num_comments">-</td>
+    #      <td class="num_trackbacks">-</td>
+    #    </tr>
+    #    <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
+    #    <tr class="alt_row">
+    #      <td class="title"><div class="wrapped">Jumpstart your Rails career at RailsConf 2007</div></td>
+    #      <td class="category">Conferences</td>
+    #      <td class="author">Jane Doe</td>
+    #      <td class="publish_date">4 days</td>
+    #      <td class="num_comments">-</td>
+    #      <td class="num_trackbacks">-</td>
+    #    </tr>
+    #    <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
+    #    <tr class="row">
+    #      <td class="title"><div class="wrapped">Getting some REST</div></td>
+    #      <td class="category">Rails</td>
+    #      <td class="author">John Doe</td>
+    #      <td class="publish_date">about 18 hours</td>
+    #      <td class="num_comments">-</td>
+    #      <td class="num_trackbacks">-</td>
+    #    </tr>
+    #  </tbody>
+    #  </table>
     module TableHelper
       # 
       # 
@@ -134,6 +134,16 @@ module PluginAWeek #:nodoc:
           @tag_name, @content, @html_options = tag_name, content, html_options
         end
         
+        # Gets the html option for the cell
+        def [](option)
+          @html_options[option.to_sym]
+        end
+        
+        # Sets the html option for the cell
+        def []=(option, value)
+          @html_options[option.to_sym] = value
+        end
+        
         # Builds the html representation of the cell
         def build
           content_tag(@tag_name, @content, @html_options)
@@ -173,7 +183,7 @@ module PluginAWeek #:nodoc:
           @html_options[option.to_sym]
         end
         
-        # Sets the html option for the cell
+        # Sets the html option for the row
         def []=(option, value)
           @html_options[option.to_sym] = value
         end
@@ -213,29 +223,38 @@ module PluginAWeek #:nodoc:
         # an array of column names.  If a specific column is not found, a blank
         # cell is rendered.
         def build(columns = nil)
-          row_html = ''
+          html = ''
           
           if columns
+            number_to_skip = 0 # Keeps track of the # of columns to skip
+            
             columns.each do |class_name|
-              row = @cells[class_name] || Cell.empty_data
-              row_html << row.build
+              number_to_skip -= 1 and next if number_to_skip > 0
+              
+              if cell = @cells[class_name]
+                number_to_skip = (cell[:colspan] || 1) - 1
+              else
+                cell = Cell.empty_data
+              end
+              
+              html << cell.build
             end
           else
             @cells.values.each do |cell|
-              row_html << cell.build
+              html << cell.build
             end
           end
           
           options = @html_options.dup
           options.set_or_append(:class, @options[:alternate] ? 'alt_row' : 'row')
-          row_html = content_tag('tr', row_html, options)
+          html = content_tag('tr', html, options)
           
           if @options[:border] == :before
-            build_border(columns) + row_html
+            build_border(columns) + html
           elsif @options[:border] == :after
-            row_html + build_border(columns)
+            html + build_border(columns)
           else
-            row_html
+            html
           end
         end
         
