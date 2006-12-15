@@ -1,4 +1,28 @@
-TableHelper
-===========
+= table_helper
 
-Description goes here
+table_helper adds a helper method for generating HTML tables from collections.
+
+== Resources
+
+Wiki
+
+* http://wiki.pluginaweek.org/Table_helper
+
+Announcement
+
+* http://www.pluginaweek.org/
+
+Source
+
+* http://svn.pluginaweek.org/trunk/plugins/action_pack/table_helper
+
+Development
+
+* http://dev.pluginaweek.org/browser/trunk/plugins/action_pack/table_helper
+
+== Description
+
+
+
+== Testing
+

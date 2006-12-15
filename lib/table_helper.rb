@@ -1,3 +1,5 @@
+require 'set_or_append'
+
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
     # Provides a set of methods for working with tables and especially tables
@@ -25,7 +27,7 @@ module PluginAWeek #:nodoc:
     # 
     # ...is compiled to (formatted here for the sake of sanity):
     # 
-    #  <table cellpadding="0" cellspacing="0" class="summary alternate" id="posts">
+    #  <table cellpadding="0" cellspacing="0" class="alternate summary" id="posts">
     #  <thead>
     #    <tr class="header row">
     #      <th class="title" scope="col">Title</th><th class="category" scope="col">Category</th>
@@ -44,7 +46,7 @@ module PluginAWeek #:nodoc:
     #      <td class="num_trackbacks">-</td>
     #    </tr>
     #    <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
-    #    <tr class="alt_row">
+    #    <tr class="row alternate">
     #      <td class="title"><div class="wrapped">5 reasons you should care about Rails</div></td>
     #      <td class="category">Rails</td><td class="author">John Q. Public</td>
     #      <td class="publish_date">21 days</td>
@@ -61,7 +63,7 @@ module PluginAWeek #:nodoc:
     #      <td class="num_trackbacks">-</td>
     #    </tr>
     #    <tr><td colspan="6"><div class="horizontal_border"><!-- --></div></td></tr>
-    #    <tr class="alt_row">
+    #    <tr class="row alternate">
     #      <td class="title"><div class="wrapped">Jumpstart your Rails career at RailsConf 2007</div></td>
     #      <td class="category">Conferences</td>
     #      <td class="author">Jane Doe</td>
@@ -84,7 +86,7 @@ module PluginAWeek #:nodoc:
       # 
       # 
       # Configuration options:
-      # * <tt>alternate</tt> - If set to :odd or :even, every odd or even-numbered row will have the class 'alt_row' appended to its html attributes, respectively.  Default is nil.
+      # * <tt>alternate</tt> - If set to :odd or :even, every odd or even-numbered row will have the class 'alternate' appended to its html attributes, respectively.  Default is nil.
       # * <tt>row_border</tt> - If set to :before, border rows will be generated before each normal row.  If set to :after or true, border rows will be generated after each normal row.  Default is :after.
       # * <tt>header</tt> - Specify if a header (thead) should be built into the table.  Default is true.
       # * <tt>footer</tt> - Specify if a footer (tfoot) should be built into the table.  Default is false.
@@ -118,30 +120,36 @@ module PluginAWeek #:nodoc:
         
         class << self
           # An empty data cell
-          def empty_data
-            @empty_data ||= new('td', :empty, '')
+          def empty_data(class_name = :empty)
+            empty_cell('td', class_name)
           end
           
           # An empty header cell
-          def empty_header
-            @empty_header ||= new('th', :empty, '')
+          def empty_header(class_name = :empty)
+            empty_cell('th', class_name)
+          end
+          
+          private
+          def empty_cell(tag_name, class_name) #:nodoc:
+            html_options = {}
+            html_options[:class] = 'empty' if class_name.to_sym != :empty
+            
+            new(tag_name, class_name, '', html_options)
           end
         end
         
-        def initialize(tag_name, class_name, content = class_name.titleize, html_options = {}) #:nodoc
-          html_options.set_or_append(:class, class_name.to_s)
+        # The collection of options to use in the cell's html
+        attr_reader :html_options
+        
+        delegate    :[],
+                    :[]=,
+                      :to => :html_options
+        
+        def initialize(tag_name, class_name, content = class_name.to_s.titleize, html_options = {}) #:nodoc
+          @html_options = html_options.symbolize_keys
+          @html_options.set_or_prepend(:class, class_name.to_s)
           
-          @tag_name, @content, @html_options = tag_name, content, html_options
-        end
-        
-        # Gets the html option for the cell
-        def [](option)
-          @html_options[option.to_sym]
-        end
-        
-        # Sets the html option for the cell
-        def []=(option, value)
-          @html_options[option.to_sym] = value
+          @tag_name, @content = tag_name, content
         end
         
         # Builds the html representation of the cell
@@ -161,31 +169,29 @@ module PluginAWeek #:nodoc:
         # The collection of cells in the order that they will be rendered
         attr_reader :cells
         
+        # The collection of options to use in the row's html
+        attr_reader :html_options
+        
+        delegate    :[],
+                    :[]=,
+                      :to => :html_options
+        
         # Configuration options:
         # <tt>alternate</tt> - Specify if this is an alternating row.  Default is false.
         # <tt>border</tt> - Specify whether a border should be used.  Default is nil (no border).
-        def initialize(options = {}) #:nodoc:
+        def initialize(options = {}, html_options = {}) #:nodoc:
           options.assert_valid_keys(
             :alternate,
             :border
           )
+          
           @options = {
             :alternate => false
           }.update(options)
           
           @border = Border.new
           @cells = ActiveSupport::OrderedHash.new
-          @html_options = {}
-        end
-        
-        # Gets the html option for the row
-        def [](option)
-          @html_options[option.to_sym]
-        end
-        
-        # Sets the html option for the row
-        def []=(option, value)
-          @html_options[option.to_sym] = value
+          @html_options = html_options
         end
         
         # Builds a new data cell (i.e. <td>).  The class name will be
@@ -199,8 +205,8 @@ module PluginAWeek #:nodoc:
         # ...would generate the following tag:
         # 
         #   <td class="author">John Doe</td>
-        def cell(class_name, content = '', html_options = {})
-          @cells[class_name] = Cell.new('td', class_name, content, html_options)
+        def cell(class_name, *args)
+          @cells[class_name] = Cell.new('td', class_name, *args)
         end
         
         # Builds a new header cell (i.e. <th>).  The class name will be
@@ -214,8 +220,8 @@ module PluginAWeek #:nodoc:
         # ...would generate the following tag:
         # 
         #   <th class="title author">Author Name</th>
-        def header(class_name, content = '', html_options = {})
-          @cells[class_name] = Cell.new('th', class_name, content, html_options)
+        def header(class_name, *args)
+          @cells[class_name] = Cell.new('th', class_name, *args)
         end
         
         # Builds the row, including the border if it was specified to be used.
@@ -234,7 +240,8 @@ module PluginAWeek #:nodoc:
               if cell = @cells[class_name]
                 number_to_skip = (cell[:colspan] || 1) - 1
               else
-                cell = Cell.empty_data
+                cell = Cell.empty_data.dup
+                cell.html_options.set_or_prepend(:class, class_name)
               end
               
               html << cell.build
@@ -246,7 +253,8 @@ module PluginAWeek #:nodoc:
           end
           
           options = @html_options.dup
-          options.set_or_append(:class, @options[:alternate] ? 'alt_row' : 'row')
+          options.set_or_prepend(:class, 'alternate') if @options[:alternate]
+          options.set_or_prepend(:class, 'row')
           html = content_tag('tr', html, options)
           
           if @options[:border] == :before
@@ -261,7 +269,7 @@ module PluginAWeek #:nodoc:
         private
         # Builds the border row and returns the html generated for it
         def build_border(columns = nil)
-          @border.cell[:colspan] = columns.size if columns && @border.cell[:colspan].nil?
+          @border.cell[:colspan] = columns.size if columns && columns.size > 1 && @border.cell[:colspan].nil?
           @border.build
         end
       end
@@ -273,18 +281,12 @@ module PluginAWeek #:nodoc:
       class Border
         include ActionView::Helpers::TagHelper
         
+        delegate  :[],
+                  :[]=,
+                    :to => :row_options
+        
         def initialize #:nodoc:
           @row_options, @cell_options = {}, {}
-        end
-        
-        # Gets the html option for the border
-        def [](option)
-          @row_options[option]
-        end
-        
-        # Sets the html option for the border
-        def []=(option, value)
-          @row_options[option] = value
         end
         
         # Gets the html options that will be used for the actual td cell within
@@ -294,6 +296,7 @@ module PluginAWeek #:nodoc:
         end
         
         # Builds the html representation of the border
+        # TODO: Type of border should be customizable
         def build
           html = '<!-- -->'
           html = content_tag('div', html, :class => 'horizontal_border')
@@ -318,8 +321,6 @@ module PluginAWeek #:nodoc:
         attr_reader :columns
         
         def initialize(collection, options = {}, html_options = {}) #:nodoc:
-          @collection = collection
-          
           options.assert_valid_keys(
             :alternate,
             :row_border,
@@ -328,24 +329,23 @@ module PluginAWeek #:nodoc:
             :no_content_on_empty
           )
           @options = {
-            :alternate => :odd,
-            :row_border => :after,
             :header => true,
             :footer => false,
             :no_content_on_empty => true
           }.update(options)
           
-          raise ArgumentError, ':alternate must be set to :odd or :even' if ![:odd, :even].include?(@options[:alternate])
-          raise ArgumentError, ':row_border must be set to :before or :after' if ![:before, :after].include?(@options[:row_border])
+          raise ArgumentError, ':alternate must be set to :odd or :even' if @options[:alternate] && ![:odd, :even].include?(@options[:alternate])
+          raise ArgumentError, ':row_border must be set to :before or :after' if @options[:row_border] && ![:before, :after].include?(@options[:row_border])
           
           @html_options = {
             :cellspacing => '0',
             :cellpadding => '0'
           }.update(html_options)
-          @html_options.set_or_append(:class, 'alternate') if options[:alternate]
+          @html_options.set_or_prepend(:class, 'alternate') if options[:alternate]
           
+          @collection = collection
           @columns = ActiveSupport::OrderedHash.new
-          @no_content_caption = "Nothing to see here... move along"
+          @no_content_caption = 'No matches found.'
           
           yield self if block_given?
         end
@@ -361,7 +361,7 @@ module PluginAWeek #:nodoc:
         #   end
         # 
         # ...will generate a table with 1 column
-        def column(class_name, caption)
+        def column(class_name, caption = class_name.to_s.titleize)
           @columns[class_name] = caption
         end
         
@@ -370,16 +370,19 @@ module PluginAWeek #:nodoc:
         # 
         # This method expects a block that defines the content within each cell
         # in a row.  See build_body for more information.
-        def build(&block)
-          build_body(true, &block)
+        def build(header_options = {}, header_html_options = {}, &block)
+          build_body(header_options, header_html_options, true, &block)
         end
         
         # Builds the header of the table.  The header row will be wrapped within
         # a thead tag.  If the size of the collection is 0 and :no_content_on_empty
         # was set to true, then the thead will be hidden.
-        def build_header
-          row = Row.new(:border => (@options[:dotted_header] ? :after : false))
-          row[:class] = 'header'
+        # 
+        # See Row#initialize for the possible configuration options.
+        def build_header(options = {}, html_options = {})
+          html_options.set_or_prepend(:class, 'header')
+          row = Row.new(options, html_options)
+          
           columns.each do |class_name, caption|
             row.header class_name, caption, :scope => 'col'
           end
@@ -411,13 +414,17 @@ module PluginAWeek #:nodoc:
         # to true, then the actual body will be replaced by a single row
         # containing the html that was stored in the CollectionTable's
         # no_content_caption.
-        def build_body(dump_table = true, &block)
+        def build_body(header_options = {}, header_html_options = {}, dump_table = false, &block)
           html = ''
           
           # Display nothing if there are no objects to display
-          if @collection.size == 0
+          if @collection.size == 0 && @options[:no_content_on_empty]
             row = Row.new
-            row.cell :no_content, no_content_caption, :colspan => columns.size
+            
+            html_options = {}
+            html_options[:colspan] = columns.size if columns.size > 1
+            row.cell :no_content, no_content_caption, html_options
+            
             html << row.build
           else
             @collection.each_with_index do |object, i|
@@ -428,7 +435,7 @@ module PluginAWeek #:nodoc:
           @body = content_tag('tbody', html)
           
           if dump_table
-            content_tag('table', build_header + @body, @html_options)
+            content_tag('table', build_header(header_options, header_html_options) + @body, @html_options)
           end
         end
         
@@ -472,9 +479,11 @@ module PluginAWeek #:nodoc:
         # build_footer should be invoked AFTER build_body.  The result of
         # build_footer should then be used as output to your template.  It will
         # contain the header, body, and footer wrapped inside of a table tag.
-        def build_footer(&block)
-          row = Row.new(:border => (@options[:dotted_header] ? :after : false))
-          row[:class] = 'footer'
+        # 
+        # See Row#initialize for the possible configuration options.
+        def build_footer(html_options = {}, &block)
+          html_options.set_or_prepend(:class, 'footer')
+          row = Row.new({}, html_options)
           
           yield row
           
