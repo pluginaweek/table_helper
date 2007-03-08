@@ -7,21 +7,22 @@ module PluginAWeek #:nodoc:
     # example of a table that lists a series of attributes for each object.
     # 
     #  <%
-    #    table = collection_table(@posts, {:alternate => :odd}, :id => 'posts', :class => 'summary') do |t|
+    #    collection_table(@posts, {:alternate => :odd}, :id => 'posts', :class => 'summary') do |t|
     #      t.column :title, 'Title'
     #      t.column :category, 'Category'
     #      t.column :author, 'Author'
     #      t.column :publish_date, 'Date<br \>Published'
     #      t.column :num_comments, '# Comments'
     #      t.column :num_trackbacks, '# Trackbacks'
-    #    end
-    #    table.build do |row, post, index|
-    #      row.cell :title, "<div class=\"wrapped\">#{post.title}</div>"
-    #      row.cell :category, post.category.name
-    #      row.cell :author, post.author.name
-    #      row.cell :publish_date, time_ago_in_words(post.published_on)
-    #      row.cell :num_comments, post.comments.empty? ? '-' : post.comments.size
-    #      row.cell :num_trackbacks, post.trackbacks.empty? ? '-' : post.trackbacks.size
+    #      
+    #      t.build do |row, post, index|
+    #        row.cell :title, "<div class=\"wrapped\">#{post.title}</div>"
+    #        row.cell :category, post.category.name
+    #        row.cell :author, post.author.name
+    #        row.cell :publish_date, time_ago_in_words(post.published_on)
+    #        row.cell :num_comments, post.comments.empty? ? '-' : post.comments.size
+    #        row.cell :num_trackbacks, post.trackbacks.empty? ? '-' : post.trackbacks.size
+    #      end
     #    end
     #  %>
     # 
@@ -30,8 +31,10 @@ module PluginAWeek #:nodoc:
     #  <table cellpadding="0" cellspacing="0" class="alternate summary" id="posts">
     #  <thead>
     #    <tr class="header row">
-    #      <th class="title" scope="col">Title</th><th class="category" scope="col">Category</th>
-    #      <th class="author" scope="col">Author</th><th class="publish_date" scope="col">Date<br \>Published</th>
+    #      <th class="title" scope="col">Title</th>
+    #      <th class="category" scope="col">Category</th>
+    #      <th class="author" scope="col">Author</th>
+    #      <th class="publish_date" scope="col">Date<br \>Published</th>
     #      <th class="num_comments" scope="col"># Comments</th>
     #      <th class="num_trackbacks" scope="col"># Trackbacks</th>
     #    </tr>
@@ -100,7 +103,7 @@ module PluginAWeek #:nodoc:
       # row cell (td) or a header cell (th).  By default, all cells will have
       # their column name appended to the cell's class value.
       # 
-      # For example,
+      # == Creating data cells
       # 
       #   Cell.new('td', :author, 'John Doe')
       # 
@@ -108,13 +111,21 @@ module PluginAWeek #:nodoc:
       # 
       #   <td class="author">John Doe</td>
       # 
-      # and
+      # == Creating header cells
       # 
       #   Cell.new('th', :author, 'Author Name')
       # 
       # ...would generate the following tag:
       # 
       #   <th class="author">Author Name</th>
+      # 
+      # == Setting html options
+      # 
+      # To set custom attributes on the cell's tag:
+      # 
+      #   c = Cell.new('th', :author)
+      #   c[:style] = 'display: none;'
+      #   c[:color] = '#ff0000'
       class Cell
         include ActionView::Helpers::TagHelper
         
@@ -159,7 +170,29 @@ module PluginAWeek #:nodoc:
       end
       
       # Represents a single row within a table.  A row can consist of either
-      # data cells (td) or header cells (th).  
+      # data cells (td) or header cells (th). 
+      # 
+      # == Borders
+      # 
+      # Each row has an optional special border row that can be generated either
+      # immediately before or immediately after this row.  A separate border row
+      # is usually used when you cannot express borders in the css of the row
+      # containing the data (e.g. dotted borders in Internet Explorer).
+      # 
+      # To modify the properties of the border, you can access +row.border+ like
+      # so:
+      # 
+      #   r = Row.new
+      #   r.border[:style] = 'color: #ff0000;'
+      # 
+      # == Modifying HTML options
+      # 
+      # HTML options can normally be specified when creating the row.  However,
+      # if they need to be modified after the row has been created, you can
+      # access the properties like so:
+      # 
+      #   r = Row.new
+      #   r[:style] = 'display: none;'
       class Row
         include ActionView::Helpers::TagHelper
         
@@ -178,7 +211,7 @@ module PluginAWeek #:nodoc:
         
         # Configuration options:
         # <tt>alternate</tt> - Specify if this is an alternating row.  Default is false.
-        # <tt>border</tt> - Specify whether a border should be used.  Default is nil (no border).
+        # <tt>border</tt> - If set to :before, a border row will be generated before this row.  If set to :after or true, a border row will be generated after this row.  Default is nil (no border).
         def initialize(options = {}, html_options = {}) #:nodoc:
           options.assert_valid_keys(
             :alternate,
@@ -192,21 +225,6 @@ module PluginAWeek #:nodoc:
           @border = Border.new
           @cells = ActiveSupport::OrderedHash.new
           @html_options = html_options
-        end
-        
-        # Builds a new data cell (i.e. <td>).  The class name will be
-        # automatically merged into the cell's html options in addition to any
-        # classes already defined.
-        # 
-        # For example,
-        # 
-        #   row.cell :author, 'John Doe'
-        # 
-        # ...would generate the following tag:
-        # 
-        #   <td class="author">John Doe</td>
-        def cell(class_name, *args)
-          @cells[class_name] = Cell.new('td', class_name, *args)
         end
         
         # Builds a new header cell (i.e. <th>).  The class name will be
@@ -224,10 +242,28 @@ module PluginAWeek #:nodoc:
           @cells[class_name] = Cell.new('th', class_name, *args)
         end
         
+        # Builds a new data cell (i.e. <td>).  The class name will be
+        # automatically merged into the cell's html options in addition to any
+        # classes already defined.
+        # 
+        # For example,
+        # 
+        #   row.cell :author, 'John Doe'
+        # 
+        # ...would generate the following tag:
+        # 
+        #   <td class="author">John Doe</td>
+        def cell(class_name, *args)
+          @cells[class_name] = Cell.new('td', class_name, *args)
+        end
+        
         # Builds the row, including the border if it was specified to be used.
         # You can explicitly set the order and number of columns by passing in
         # an array of column names.  If a specific column is not found, a blank
         # cell is rendered.
+        # 
+        # If no columns are specified, then the order of coumns is based on the
+        # order in which the cells were created
         def build(columns = nil)
           html = ''
           
@@ -268,6 +304,10 @@ module PluginAWeek #:nodoc:
         
         private
         # Builds the border row and returns the html generated for it
+        # 
+        # If no clumns are specified, then the border is assumed to span across
+        # one column; otherwise, the :colspan property will be set to the number
+        # of columns being used
         def build_border(columns = nil)
           @border.cell[:colspan] = columns.size if columns && columns.size > 1 && @border.cell[:colspan].nil?
           @border.build
@@ -298,7 +338,7 @@ module PluginAWeek #:nodoc:
         # Builds the html representation of the border
         # TODO: Type of border should be customizable
         def build
-          html = '<!-- -->'
+          html = '<!-- -->' # Use a comment in the content portion so that it shows up in IE
           html = content_tag('div', html, :class => 'horizontal_border')
           html = content_tag('td', html, @cell_options)
           
