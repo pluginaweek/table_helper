@@ -14,15 +14,13 @@ module PluginAWeek #:nodoc:
     #      t.column :publish_date, 'Date<br \>Published'
     #      t.column :num_comments, '# Comments'
     #      t.column :num_trackbacks, '# Trackbacks'
-    #      
-    #      t.build do |row, post, index|
-    #        row.cell :title, "<div class=\"wrapped\">#{post.title}</div>"
-    #        row.cell :category, post.category.name
-    #        row.cell :author, post.author.name
-    #        row.cell :publish_date, time_ago_in_words(post.published_on)
-    #        row.cell :num_comments, post.comments.empty? ? '-' : post.comments.size
-    #        row.cell :num_trackbacks, post.trackbacks.empty? ? '-' : post.trackbacks.size
-    #      end
+    #    end.build do |row, post, index|
+    #      row.cell :title, "<div class=\"wrapped\">#{post.title}</div>"
+    #      row.cell :category, post.category.name
+    #      row.cell :author, post.author.name
+    #      row.cell :publish_date, time_ago_in_words(post.published_on)
+    #      row.cell :num_comments, post.comments.empty? ? '-' : post.comments.size
+    #      row.cell :num_trackbacks, post.trackbacks.empty? ? '-' : post.trackbacks.size
     #    end
     #  %>
     # 
