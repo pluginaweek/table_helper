@@ -3,14 +3,15 @@ require 'rubygems'
 require 'action_controller'
 require 'action_view'
 
-$:.unshift(File.dirname(__FILE__) + '/../lib')
-require File.dirname(__FILE__) + '/../init'
+root_path = File.dirname(__FILE__) + '/..'
+$:.unshift("#{root_path}/../lib")
+$:.unshift("#{root_path}/../../ruby/hash/set_or_append/lib")
+
+require 'table_helper'
 
 class Test::Unit::TestCase #:nodoc:
   private
-  def assert_cell_equal(tag_name, content, html_options, cell)
-    assert_equal tag_name, cell.tag_name
-    assert_equal content, cell.content
-    assert_equal html_options, cell.html_options
+  def assert_html_equal(expected, actual)
+    assert_equal expected.gsub(/\n\s*/, ''), actual
   end
 end

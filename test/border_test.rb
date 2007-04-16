@@ -1,54 +1,38 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class PluginAWeek::Helpers::TableHelper::Border
-  attr_reader :row_options,
-              :cell_options
-end
-
 class BorderTest < Test::Unit::TestCase
   Border = PluginAWeek::Helpers::TableHelper::Border
+  Header = PluginAWeek::Helpers::TableHelper::Header
   
   def setup
-    @border = Border.new
+    @border = Border.new(Header.new([]))
   end
   
   def test_default_values
-    expected_row_options = {}
-    assert_equal expected_row_options, @border.row_options
-    
-    expected_cell_options = {}
-    assert_equal expected_cell_options, @border.cell_options
-  end
-  
-  def test_get_html_option
-    @border.row_options[:class] = 'name'
-    assert_equal 'name', @border[:class]
-  end
-  
-  def test_set_html_option
-    @border[:float] = 'left'
-    assert_equal 'left', @border[:float]
-    
-    expected_row_options = {:float => 'left'}
-    assert_equal expected_row_options, @border.row_options
+    assert_equal 'border', @border[:class]
   end
   
   def test_cell
+    assert_equal '<td><div><!-- --></div></td>', @border.cell.html
+    
     @border.cell[:float] = 'left'
-    assert_equal 'left', @border.cell[:float]
-    
-    expected_cell_options = {:float => 'left'}
-    assert_equal expected_cell_options, @border.cell_options
+    assert_equal '<td float="left"><div><!-- --></div></td>', @border.cell.html
   end
   
-  def test_build_with_defaults
-    assert_equal '<tr><td><div class="horizontal_border"><!-- --></div></td></tr>', @border.build
+  def test_html
+    assert_equal '<tr class="border"><td><div><!-- --></div></td></tr>', @border.html
   end
   
-  def test_build_with_custom_options
-    @border[:class] = 'border'
-    @border.cell[:class] = 'green'
-    
-    assert_equal '<tr class="border"><td class="green"><div class="horizontal_border"><!-- --></div></td></tr>', @border.build
+  def test_html_with_custom_options
+    @border[:style] = 'display: none;'
+    assert_equal '<tr class="border" style="display: none;"><td><div><!-- --></div></td></tr>', @border.html
+  end
+  
+  def test_html_with_multiple_columns
+    header = Header.new([])
+    header.column :title
+    header.column :author_name
+    border = Border.new(header)
+    assert_equal '<tr class="border"><td colspan="2"><div><!-- --></div></td></tr>', border.html
   end
 end
