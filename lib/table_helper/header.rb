@@ -66,9 +66,12 @@ module PluginAWeek #:nodoc:
             
             # Remove all of the shortcut methods
             column_names.each do |column|
+              begin
               klass = class << self; self; end
               klass.class_eval do
                 remove_method(column)
+              end
+              rescue Exception => e
               end
             end
             
