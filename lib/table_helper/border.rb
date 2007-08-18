@@ -2,7 +2,7 @@ require 'table_helper/cell'
 
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
+    module TableHelper
       # Represents a border within a table.  This is a special class because it
       # allows you to define custom borders like dotted lines that otherwise
       # could not be used in browsers that do not support these types of line

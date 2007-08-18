@@ -2,7 +2,7 @@ require 'table_helper/row'
 
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
+    module TableHelper
       # Represents a single row within the body of a table.  The row can consist
       # of either data cells or header cells. 
       # 

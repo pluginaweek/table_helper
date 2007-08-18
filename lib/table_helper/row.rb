@@ -2,7 +2,7 @@ require 'table_helper/cell'
 
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
+    module TableHelper
       # Represents a single row within a table.  A row can consist of either
       # data cells or header cells.
       class Row < HtmlElement
@@ -33,13 +33,10 @@ module PluginAWeek #:nodoc:
         # Clears all of the current cells from the row, removing 
         def clear
           cell_names.each do |name|
-          begin
             klass = class << self; self; end
             klass.class_eval do
               remove_method(name)
             end
-          rescue Exception => e
-          end
           end
           
           @cells.clear

@@ -1,6 +1,6 @@
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
+    module TableHelper
       # Represents a single cell within a table.  This can either be a regular
       # data cell (td) or a header cell (th).  By default, all cells will have
       # their column name appended to the cell's class attribute.

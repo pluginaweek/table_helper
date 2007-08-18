@@ -4,6 +4,10 @@ table_helper adds a helper method for generating HTML tables from collections.
 
 == Resources
 
+API
+
+* http://api.pluginaweek.org/table_helper
+
 Wiki
 
 * http://wiki.pluginaweek.org/Table_helper
@@ -22,7 +26,98 @@ Development
 
 == Description
 
+Tables of summary data for ActiveRecord models are often formatted in the same
+way by creating a header indicating the attribute and a body containing the
+data from each record in separate rows.  table_helper makes it easier to create
+these types of tables by DRYing much of the html being generated.
 
+== Example
 
-== Testing
+  <%
+    collection_table(@posts, {}, :id => 'posts', :class => 'summary') do |header, body|
+      header.column :title
+      header.column :category
+      header.column :author
+      header.column :publish_date, 'Date<br \>Published'
+      header.column :num_comments, '# Comments'
+      header.column :num_trackbacks, '# Trackbacks'
+      
+      body.alternate = true
+      body.build do |row, post, index|
+        row.category       post.category.name
+        row.author         post.author.name
+        row.publish_date   time_ago_in_words(post.published_on)
+        row.num_comments   post.comments.empty? ? '-' : post.comments.size
+        row.num_trackbacks post.trackbacks.empty? ? '-' : post.trackbacks.size
+      end
+    end
+  %>
 
+...is compiled to (formatted here for the sake of sanity):
+
+  <table cellpadding="0" cellspacing="0" class="summary" id="posts">
+  <thead>
+    <tr>
+      <th class="title" scope="col">Title</th>
+      <th class="category" scope="col">Category</th>
+      <th class="author" scope="col">Author</th>
+      <th class="publish_date" scope="col">Date<br \>Published</th>
+      <th class="num_comments" scope="col"># Comments</th>
+      <th class="num_trackbacks" scope="col"># Trackbacks</th>
+    </tr>
+  </thead>
+  <tbody class="alternate">
+    <tr class="row">
+      <td class="title">Open-source projects: The good, the bad, and the ugly</td>
+      <td class="category">General</td>
+      <td class="author">John Doe</td>
+      <td class="publish_date">23 days</td>
+      <td class="num_comments">-</td>
+      <td class="num_trackbacks">-</td>
+    </tr>
+    <tr class="row alternate">
+      <td class="title">5 reasons you should care about Rails</td>
+      <td class="category">Rails</td><td class="author">John Q. Public</td>
+      <td class="publish_date">21 days</td>
+      <td class="num_comments">-</td>
+      <td class="num_trackbacks">-</td>
+    </tr>
+    <tr class="row">
+      <td class="title">Deprecation: Stop digging yourself a hole</td>
+      <td class="category">Rails</td>
+      <td class="author">Jane Doe</td>
+      <td class="publish_date">17 days</td>
+      <td class="num_comments">-</td>
+      <td class="num_trackbacks">-</td>
+    </tr>
+    <tr class="row alternate">
+      <td class="title">Jumpstart your Rails career at RailsConf 2007</td>
+      <td class="category">Conferences</td>
+      <td class="author">Jane Doe</td>
+      <td class="publish_date">4 days</td>
+      <td class="num_comments">-</td>
+      <td class="num_trackbacks">-</td>
+    </tr>
+    <tr class="row">
+      <td class="title">Getting some REST</td>
+      <td class="category">Rails</td>
+      <td class="author">John Doe</td>
+      <td class="publish_date">about 18 hours</td>
+      <td class="num_comments">-</td>
+      <td class="num_trackbacks">-</td>
+    </tr>
+  </tbody>
+  </table>
+
+== Usage
+
+See the API for more information on syntax and options.  You should only use
+table_helper if it fits the needs of your application.  Remember one of the key
+principles of Rails, KISS (Keep It Simple Stupid).  table_helper works really
+well when you need to output several of these types of summary tables.  If this
+is not the case, you may want to stick to using actual html.
+
+== Dependencies
+
+This plugin depends on the presence of the following plugins:
+* set_or_append - http://wiki.pluginaweek.org/Set_or_append

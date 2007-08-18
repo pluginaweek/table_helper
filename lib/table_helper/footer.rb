@@ -2,7 +2,7 @@ require 'table_helper/row'
 
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
+    module TableHelper
       # Represents the header of the table.  In HTML, you can think of this as
       # the tfoot tag of the table.
       class Footer < HtmlElement

@@ -5,7 +5,7 @@ require 'table_helper/footer'
 
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
+    module TableHelper
       # Represents a table that is displaying data for multiple objects within
       # a collection.
       class CollectionTable < HtmlElement
@@ -27,7 +27,7 @@ module PluginAWeek #:nodoc:
             :cellpadding => '0'
           )
           
-          @header = Header.new(collection, options[:class] || class_for_collection(collection))
+          @header = Header.new(collection, options[:class])
           @body = Body.new(collection, @header)
           @footer = Footer.new(collection)
         end
@@ -49,14 +49,6 @@ module PluginAWeek #:nodoc:
         end
         
         private
-        def class_for_collection(collection)
-          if collection.respond_to?(:proxy_reflection)
-            collection.proxy_reflection.klass
-          elsif !collection.empty?
-            collection.first.class
-          end
-        end
-        
         def tag_name
           'table'
         end

@@ -3,8 +3,9 @@ require 'table_helper/border'
 
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
-      # 
+    module TableHelper
+      # Represents the body of the table.  In HTML, you can think of this as
+      # the <tbody> tag of the table.
       class Body < HtmlElement
         # If set to :odd or :even, every odd or even-numbered row will have the
         # class 'alternate' appended to its html attributes, respectively.
@@ -19,7 +20,7 @@ module PluginAWeek #:nodoc:
         # each normal row.  Default is nil.
         attr_accessor :row_borders
         
-        def initialize(collection, header)
+        def initialize(collection, header) #:nodoc:
           super()
           
           @collection, @header = collection, header
@@ -117,7 +118,7 @@ module PluginAWeek #:nodoc:
         
         def html #:nodoc:
           html_options = @html_options.dup
-          html_options.set_or_prepend(:class, 'alternate') if alternate_rows
+          html_options.set_or_append(:class, 'alternate') if alternate_rows
           
           content_tag(tag_name, content, html_options)
         end

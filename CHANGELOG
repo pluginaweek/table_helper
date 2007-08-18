@@ -1,3 +1,11 @@
 *SVN*
 
+*0.0.1* (August 18th, 2007)
+
+* Add README documentation
+
+* Add gem dependency on set_or_append
+
+* Refactor test method names
+
 * Convert dos newlines to unix newlines

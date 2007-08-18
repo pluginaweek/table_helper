@@ -2,7 +2,7 @@ require 'table_helper/row'
 
 module PluginAWeek #:nodoc:
   module Helpers #:nodoc:
-    module TableHelper #:nodoc:
+    module TableHelper
       # Represents the header of the table.  In HTML, you can think of this as
       # the <thead> tag of the table.
       class Header < HtmlElement
@@ -32,6 +32,7 @@ module PluginAWeek #:nodoc:
           # figure out what columns are defined in that class, then we can
           # pre-fill the header with those columns so that the user doesn't
           # have to
+          klass ||= class_for_collection(collection)
           if klass && klass.respond_to?(:column_names)
             klass.column_names.each {|name| column(name)}
             @customized = false
@@ -66,12 +67,9 @@ module PluginAWeek #:nodoc:
             
             # Remove all of the shortcut methods
             column_names.each do |column|
-              begin
               klass = class << self; self; end
               klass.class_eval do
                 remove_method(column)
-              end
-              rescue Exception => e
               end
             end
             
@@ -87,7 +85,11 @@ module PluginAWeek #:nodoc:
           unless respond_to?(name)
             instance_eval <<-end_eval
               def #{name}(*args)
-                @row.#{name}(*args)
+                if args.empty?
+                  @row.#{name}
+                else
+                  @row.#{name}(*args)
+                end
               end
             end_eval
           end
@@ -110,6 +112,14 @@ module PluginAWeek #:nodoc:
         
         def content
           @row.html
+        end
+        
+        def class_for_collection(collection)
+          if collection.respond_to?(:proxy_reflection)
+            collection.proxy_reflection.klass
+          elsif !collection.empty?
+            collection.first.class
+          end
         end
       end
     end

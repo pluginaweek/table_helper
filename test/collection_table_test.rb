@@ -44,236 +44,221 @@ class CollectionTableTest < Test::Unit::TestCase
     ]
   end
   
-  def test_invalid_option
+  def test_should_raise_exception_if_invalid_option_specified
     assert_raise(ArgumentError) {CollectionTable.new([], :invalid => true)}
   end
   
-  def test_default_values
+  def test_default_cellspacing_should_be_zero
     table = CollectionTable.new([])
     assert_equal '0', table[:cellspacing]
+  end
+  
+  def test_default_cellpadding_should_be_zero
+    table = CollectionTable.new([])
     assert_equal '0', table[:cellpadding]
   end
   
-  def test_only_body
+  def test_should_only_include_body_if_no_header
     table = CollectionTable.new(@collection, :header => false)
-    actual = table.build do |body|
+    html = table.build do |body|
       assert_instance_of Body, body
     end
     
     expected = <<-end_eval
-<tbody>
-  <tr class="row">
-    <td class="title">first</td>
-  </tr>
-  <tr class="row">
-    <td class="title">second</td>
-  </tr>
-  <tr class="row">
-    <td class="title">last</td>
-  </tr>
-</tbody>
-end_eval
-    assert_html_equal expected, actual
+      <tbody>
+        <tr class="row">
+          <td class="title">first</td>
+        </tr>
+        <tr class="row">
+          <td class="title">second</td>
+        </tr>
+        <tr class="row">
+          <td class="title">last</td>
+        </tr>
+      </tbody>
+    end_eval
+    assert_html_equal expected, html
   end
   
-  def test_header_and_body_by_default
+  def test_should_include_header_and_body_by_default
     table = CollectionTable.new(@collection)
-    actual = table.build do |header, body|
+    html = table.build do |header, body|
       assert_instance_of Header, header
       assert_instance_of Body, body
     end
     
     expected = <<-end_eval
-<thead>
-  <tr>
-    <th class="title" scope="col">Title</th>
-  </tr>
-</thead>
-<tbody>
-  <tr class="row">
-    <td class="title">first</td>
-  </tr>
-  <tr class="row">
-    <td class="title">second</td>
-  </tr>
-  <tr class="row">
-    <td class="title">last</td>
-  </tr>
-</tbody>
-end_eval
-    assert_html_equal expected, actual
+      <thead>
+        <tr>
+          <th class="title" scope="col">Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="title">first</td>
+        </tr>
+        <tr class="row">
+          <td class="title">second</td>
+        </tr>
+        <tr class="row">
+          <td class="title">last</td>
+        </tr>
+      </tbody>
+    end_eval
+    assert_html_equal expected, html
   end
   
-  def test_body_and_footer
+  def test_should_include_body_and_footer_if_no_header_and_footer
     table = CollectionTable.new(@collection, :header => false, :footer => true)
-    actual = table.build do |body, footer|
+    html = table.build do |body, footer|
       assert_instance_of Body, body
       assert_instance_of Footer, footer
     end
     
     expected = <<-end_eval
-<tbody>
-  <tr class="row">
-    <td class="title">first</td>
-  </tr>
-  <tr class="row">
-    <td class="title">second</td>
-  </tr>
-  <tr class="row">
-    <td class="title">last</td>
-  </tr>
-</tbody>
-<tfoot>
-  <tr>
-  </tr>
-</tfoot>
-end_eval
-    assert_html_equal expected, actual
+      <tbody>
+        <tr class="row">
+          <td class="title">first</td>
+        </tr>
+        <tr class="row">
+          <td class="title">second</td>
+        </tr>
+        <tr class="row">
+          <td class="title">last</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+        </tr>
+      </tfoot>
+    end_eval
+    assert_html_equal expected, html
   end
   
-  def test_header_body_and_footer
+  def test_should_include_header_body_and_footer_if_footer
     table = CollectionTable.new(@collection, :footer => true)
-    actual = table.build do |header, body, footer|
+    html = table.build do |header, body, footer|
       assert_instance_of Header, header
       assert_instance_of Body, body
       assert_instance_of Footer, footer
     end
     
     expected = <<-end_eval
-<thead>
-  <tr>
-    <th class="title" scope="col">Title</th>
-  </tr>
-</thead>
-<tbody>
-  <tr class="row">
-    <td class="title">first</td>
-  </tr>
-  <tr class="row">
-    <td class="title">second</td>
-  </tr>
-  <tr class="row">
-    <td class="title">last</td>
-  </tr>
-</tbody>
-<tfoot>
-  <tr>
-  </tr>
-</tfoot>
-end_eval
-    assert_html_equal expected, actual
+      <thead>
+        <tr>
+          <th class="title" scope="col">Title</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="title">first</td>
+        </tr>
+        <tr class="row">
+          <td class="title">second</td>
+        </tr>
+        <tr class="row">
+          <td class="title">last</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+        </tr>
+      </tfoot>
+    end_eval
+    assert_html_equal expected, html
   end
   
-  def test_custom_class
+  def test_should_use_custom_class_to_generate_columns
     table = CollectionTable.new(@collection, :class => Note)
+    html = table.build
     
     expected = <<-end_eval
-<thead>
-  <tr>
-    <th class="title" scope="col">Title</th>
-    <th class="author_name" scope="col">Author Name</th>
-  </tr>
-</thead>
-<tbody>
-  <tr class="row">
-    <td class="title">first</td>
-    <td class="author_name empty"></td>
-  </tr>
-  <tr class="row">
-    <td class="title">second</td>
-    <td class="author_name empty"></td>
-  </tr>
-  <tr class="row">
-    <td class="title">last</td>
-    <td class="author_name empty"></td>
-  </tr>
-</tbody>
-end_eval
-    assert_html_equal expected, table.build
+      <thead>
+        <tr>
+          <th class="title" scope="col">Title</th>
+          <th class="author_name" scope="col">Author Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="title">first</td>
+          <td class="author_name empty"></td>
+        </tr>
+        <tr class="row">
+          <td class="title">second</td>
+          <td class="author_name empty"></td>
+        </tr>
+        <tr class="row">
+          <td class="title">last</td>
+          <td class="author_name empty"></td>
+        </tr>
+      </tbody>
+    end_eval
+    assert_html_equal expected, html
   end
   
-  def test_class_from_first_element
+  def test_should_use_class_from_first_element_to_generate_columns
     @collection.insert(0, Note.new('zeroth'))
     table = CollectionTable.new(@collection)
+    html = table.build
     
     expected = <<-end_eval
-<thead>
-  <tr>
-    <th class="title" scope="col">Title</th>
-    <th class="author_name" scope="col">Author Name</th>
-  </tr>
-</thead>
-<tbody>
-  <tr class="row">
-    <td class="title">zeroth</td>
-    <td class="author_name empty"></td>
-  </tr>
-  <tr class="row">
-    <td class="title">first</td>
-    <td class="author_name empty"></td>
-  </tr>
-  <tr class="row">
-    <td class="title">second</td>
-    <td class="author_name empty"></td>
-  </tr>
-  <tr class="row">
-    <td class="title">last</td>
-    <td class="author_name empty"></td>
-  </tr>
-</tbody>
-end_eval
-    assert_html_equal expected, table.build
+      <thead>
+        <tr>
+          <th class="title" scope="col">Title</th>
+          <th class="author_name" scope="col">Author Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="title">zeroth</td>
+          <td class="author_name empty"></td>
+        </tr>
+        <tr class="row">
+          <td class="title">first</td>
+          <td class="author_name empty"></td>
+        </tr>
+        <tr class="row">
+          <td class="title">second</td>
+          <td class="author_name empty"></td>
+        </tr>
+        <tr class="row">
+          <td class="title">last</td>
+          <td class="author_name empty"></td>
+        </tr>
+      </tbody>
+    end_eval
+    assert_html_equal expected, html
   end
   
-  def test_class_from_proxy_reflection
+  def test_should_use_class_from_proxy_reflection_to_generate_columns
     collection = NoteCollection.new
     collection.concat(@collection)
     table = CollectionTable.new(collection)
+    html = table.build
     
     expected = <<-end_eval
-<thead>
-  <tr>
-    <th class="title" scope="col">Title</th>
-    <th class="author_name" scope="col">Author Name</th>
-  </tr>
-</thead>
-<tbody>
-  <tr class="row">
-    <td class="title">first</td>
-    <td class="author_name empty"></td>
-  </tr>
-  <tr class="row">
-    <td class="title">second</td>
-    <td class="author_name empty"></td>
-  </tr>
-  <tr class="row">
-    <td class="title">last</td>
-    <td class="author_name empty"></td>
-  </tr>
-</tbody>
-end_eval
-    assert_html_equal expected, table.build
-  end
-  
-  def test_html
-    table = CollectionTable.new(@collection, :header => false)
-    table.build
-    
-    expected = <<-end_eval
-<table cellpadding="0" cellspacing="0">
-  <tbody>
-    <tr class="row">
-      <td class="title">first</td>
-    </tr>
-    <tr class="row">
-      <td class="title">second</td>
-    </tr>
-    <tr class="row">
-      <td class="title">last</td>
-    </tr>
-  </tbody>
-</table>
-end_eval
-    assert_html_equal expected, table.html
+      <thead>
+        <tr>
+          <th class="title" scope="col">Title</th>
+          <th class="author_name" scope="col">Author Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row">
+          <td class="title">first</td>
+          <td class="author_name empty"></td>
+        </tr>
+        <tr class="row">
+          <td class="title">second</td>
+          <td class="author_name empty"></td>
+        </tr>
+        <tr class="row">
+          <td class="title">last</td>
+          <td class="author_name empty"></td>
+        </tr>
+      </tbody>
+    end_eval
+    assert_html_equal expected, html
   end
 end
