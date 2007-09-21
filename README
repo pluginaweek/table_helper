@@ -1,6 +1,6 @@
 = table_helper
 
-table_helper adds a helper method for generating HTML tables from collections.
++table_helper+ adds a helper method for generating HTML tables from collections.
 
 == Resources
 
@@ -31,7 +31,9 @@ way by creating a header indicating the attribute and a body containing the
 data from each record in separate rows.  table_helper makes it easier to create
 these types of tables by DRYing much of the html being generated.
 
-== Example
+== Usage
+
+=== Example
 
   <%
     collection_table(@posts, {}, :id => 'posts', :class => 'summary') do |header, body|
@@ -109,7 +111,7 @@ these types of tables by DRYing much of the html being generated.
   </tbody>
   </table>
 
-== Usage
+=== Caveat Emptor
 
 See the API for more information on syntax and options.  You should only use
 table_helper if it fits the needs of your application.  Remember one of the key
@@ -120,4 +122,4 @@ is not the case, you may want to stick to using actual html.
 == Dependencies
 
 This plugin depends on the presence of the following plugins:
-* set_or_append - http://wiki.pluginaweek.org/Set_or_append
+* set_or_append[http://wiki.pluginaweek.org/Set_or_append]
