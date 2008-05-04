@@ -4,10 +4,6 @@
 
 == Resources
 
-Announcement
-
-* http://www.pluginaweek.org
-
 Wiki
 
 * http://wiki.pluginaweek.org/Table_helper
@@ -18,11 +14,11 @@ API
 
 Development
 
-* http://dev.pluginaweek.org/browser/trunk/plugins/action_pack/table_helper
+* http://dev.pluginaweek.org/browser/trunk/table_helper
 
 Source
 
-* http://svn.pluginaweek.org/trunk/plugins/action_pack/table_helper
+* http://svn.pluginaweek.org/trunk/table_helper
 
 == Description
 
@@ -33,9 +29,40 @@ these types of tables by DRYing much of the html being generated.
 
 == Usage
 
-=== Example
+=== Basic Example
 
-  <%
+  <%= collection_table Person.find(:all) %>
+
+...is compiled to (formatted here for the sake of sanity):
+
+  <table cellpadding="0" cellspacing="0">
+  <thead>
+    <tr>
+      <th class="first_name" scope="col">First Name</th>
+      <th class="last_name" scope="col">Last Name</th>
+      <th class="company_id" scope="col">Company</th>
+      <th class="role" scope="col">Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="row">
+      <td class="first_name">John</td>
+      <td class="last_name">Doe</td>
+      <td class="company_id">1</td>
+      <td class="role">President</td>
+    </tr>
+    <tr class="row">
+      <td class="first_name">Jane</td>
+      <td class="last_name">Doe</td>
+      <td class="company_id">1</td>
+      <td class="role">Vice-President</td>
+    </tr>
+  </tbody>
+  <table>
+
+=== Advanced Example
+
+  <%=
     collection_table(@posts, {}, :id => 'posts', :class => 'summary') do |header, body|
       header.column :title
       header.column :category
@@ -116,10 +143,9 @@ these types of tables by DRYing much of the html being generated.
 See the API for more information on syntax and options.  You should only use
 table_helper if it fits the needs of your application.  Remember one of the key
 principles of Rails, KISS (Keep It Simple Stupid).  table_helper works really
-well when you need to output several of these types of summary tables.  If this
-is not the case, you may want to stick to using actual html.
+well when you need to quickly output several of these types of summary tables.
+If this is not the case, you may want to stick to using actual html.
 
 == Dependencies
 
-This plugin depends on the presence of the following plugins:
 * set_or_append[http://wiki.pluginaweek.org/Set_or_append]

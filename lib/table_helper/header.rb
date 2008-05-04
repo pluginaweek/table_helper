@@ -1,111 +1,110 @@
 require 'table_helper/row'
 
 module PluginAWeek #:nodoc:
-  module Helpers #:nodoc:
-    module TableHelper
-      # Represents the header of the table.  In HTML, you can think of this as
-      # the <thead> tag of the table.
-      class Header < HtmlElement
-        # The actual header row
-        attr_reader   :row
+  module TableHelper
+    # Represents the header of the table.  In HTML, you can think of this as
+    # the <thead> tag of the table.
+    class Header < HtmlElement
+      # The actual header row
+      attr_reader   :row
+      
+      # Whether or not the header should be hidden when the collection is
+      # empty.  Default is true.
+      attr_accessor :hide_when_empty
+      
+      # Creates a new header for a collection that contains objects of the
+      # given class.
+      # 
+      # If the class is known, then the header will be pre-filled with
+      # the columns defined in that class (assuming it's an ActiveRecord
+      # class).
+      def initialize(collection, klass = nil)
+        super()
         
-        # Whether or not the header should be hidden when the collection is
-        # empty.  Default is true.
-        attr_accessor :hide_when_empty
+        @collection = collection
+        @row = Row.new
         
-        # Creates a new header for a collection that contains objects of the
-        # given class.
-        # 
-        # If the class is known, then the header will be pre-filled with
-        # the columns defined in that class (assuming it's an ActiveRecord
-        # class).
-        def initialize(collection, klass = nil)
-          super()
-          
-          @collection = collection
-          @row = Row.new
-          
-          @hide_when_empty = true
+        @hide_when_empty = true
+        @customized = true
+        
+        # If we know what class the objects in the collection are and we can
+        # figure out what columns are defined in that class, then we can
+        # pre-fill the header with those columns so that the user doesn't
+        # have to
+        klass ||= class_for_collection(collection)
+        if klass && klass.respond_to?(:column_names)
+          klass.column_names.each {|name| column(name)}
+          @customized = false
+        end
+      end
+      
+      # Gets the names of all of the columns being displayed in the table
+      def column_names
+        row.cell_names
+      end
+      
+      # Creates a new column with the specified caption.  Columns must be
+      # defined in the order in which they will be rendered.
+      # 
+      # The caption determines what will be displayed in each cell of the
+      # header (if the header is rendered).  For example,
+      # 
+      #   header.column :title, 'The Title'
+      # 
+      # ...will create a column the displays "The Title" in the cell.
+      # 
+      # = Setting html options
+      # 
+      # In addition to customizing the content of the column, you can also
+      # specify html options like so:
+      # 
+      #   header.column :title, 'The Title', :class => 'pretty'
+      def column(name, *args)
+        # Clear the header row if this is being customized by the user
+        if !@customized
           @customized = true
           
-          # If we know what class the objects in the collection are and we can
-          # figure out what columns are defined in that class, then we can
-          # pre-fill the header with those columns so that the user doesn't
-          # have to
-          klass ||= class_for_collection(collection)
-          if klass && klass.respond_to?(:column_names)
-            klass.column_names.each {|name| column(name)}
-            @customized = false
+          # Remove all of the shortcut methods
+          column_names.each do |column|
+            klass = class << self; self; end
+            klass.class_eval do
+              remove_method(column)
+            end
           end
+          
+          @row.clear
         end
         
-        # Gets the names of all of the columns being displayed in the table
-        def column_names
-          row.cell_names
-        end
+        column = @row.cell(name, *args)
+        column.content_type = :header
+        column[:scope] ||= 'col'
         
-        # Creates a new column with the specified caption.  Columns must be
-        # defined in the order in which they will be rendered.
-        # 
-        # The caption determines what will be displayed in each cell of the
-        # header (if the header is rendered).  For example,
-        # 
-        #   header.column :title, 'The Title'
-        # 
-        # ...will create a column the displays "The Title" in the cell.
-        # 
-        # = Setting html options
-        # 
-        # In addition to customizing the content of the column, you can also
-        # specify html options like so:
-        # 
-        #   header.column :title, 'The Title', :class => 'pretty'
-        def column(name, *args)
-          # Clear the header row if this is being customized by the user
-          if !@customized
-            @customized = true
-            
-            # Remove all of the shortcut methods
-            column_names.each do |column|
-              klass = class << self; self; end
-              klass.class_eval do
-                remove_method(column)
+        # Define a shortcut method to the cell
+        name = name.to_s.gsub('-', '_')
+        unless respond_to?(name)
+          instance_eval <<-end_eval
+            def #{name}(*args)
+              if args.empty?
+                @row.#{name}
+              else
+                @row.#{name}(*args)
               end
             end
-            
-            @row.clear
-          end
-          
-          column = @row.cell(name, *args)
-          column.content_type = :header
-          column[:scope] ||= 'col'
-          
-          # Define a shortcut method to the cell
-          name = name.to_s.gsub('-', '_')
-          unless respond_to?(name)
-            instance_eval <<-end_eval
-              def #{name}(*args)
-                if args.empty?
-                  @row.#{name}
-                else
-                  @row.#{name}(*args)
-                end
-              end
-            end_eval
-          end
-          
-          column
+          end_eval
         end
         
-        # Creates and returns the generated html for the header
-        def html
-          html_options = @html_options.dup
-          html_options[:style] = 'display: none;' if @collection.size == 0 && hide_when_empty
-          
-          content_tag(tag_name, content, html_options)
-        end
+        column
+      end
+      
+      # Creates and returns the generated html for the header
+      def html
+        html_options = @html_options.dup
+        html_options[:style] = 'display: none;' if @collection.empty? && hide_when_empty
         
-        private
+        content_tag(tag_name, content, html_options)
+      end
+      
+      private
         def tag_name
           'thead'
         end
@@ -121,7 +120,6 @@ module PluginAWeek #:nodoc:
             collection.first.class
           end
         end
-      end
     end
   end
 end

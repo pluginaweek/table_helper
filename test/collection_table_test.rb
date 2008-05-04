@@ -1,5 +1,38 @@
 require File.dirname(__FILE__) + '/test_helper'
 
+class CollectionTableByDefaultTest < Test::Unit::TestCase
+  def setup
+    @table = PluginAWeek::TableHelper::CollectionTable.new([])
+  end
+  
+  def test_cellspacing_should_be_zero
+    assert_equal '0', @table[:cellspacing]
+  end
+  
+  def test_cellpadding_should_be_zero
+    assert_equal '0', @table[:cellpadding]
+  end
+  
+  def test_should_include_header_and_footer
+    html = @table.build do |header, body|
+      assert_instance_of PluginAWeek::TableHelper::Header, header
+      assert_instance_of PluginAWeek::TableHelper::Body, body
+    end
+    
+    expected = <<-end_eval
+      <thead style="display: none;">
+        <tr></tr>
+      </thead>
+      <tbody>
+        <tr class="no_content">
+          <td>No matches found.</td>
+        </tr>
+      </tbody>
+    end_eval
+    assert_html_equal expected, html
+  end
+end
+
 class CollectionTableTest < Test::Unit::TestCase
   class Note
     def self.column_names
@@ -31,11 +64,6 @@ class CollectionTableTest < Test::Unit::TestCase
     end
   end
   
-  CollectionTable = PluginAWeek::Helpers::TableHelper::CollectionTable
-  Body = PluginAWeek::Helpers::TableHelper::Body
-  Header = PluginAWeek::Helpers::TableHelper::Header
-  Footer = PluginAWeek::Helpers::TableHelper::Footer
-  
   def setup
     @collection = [
       Post.new('first'),
@@ -45,54 +73,16 @@ class CollectionTableTest < Test::Unit::TestCase
   end
   
   def test_should_raise_exception_if_invalid_option_specified
-    assert_raise(ArgumentError) {CollectionTable.new([], :invalid => true)}
-  end
-  
-  def test_default_cellspacing_should_be_zero
-    table = CollectionTable.new([])
-    assert_equal '0', table[:cellspacing]
-  end
-  
-  def test_default_cellpadding_should_be_zero
-    table = CollectionTable.new([])
-    assert_equal '0', table[:cellpadding]
+    assert_raise(ArgumentError) {PluginAWeek::TableHelper::CollectionTable.new([], :invalid => true)}
   end
   
   def test_should_only_include_body_if_no_header
-    table = CollectionTable.new(@collection, :header => false)
+    table = PluginAWeek::TableHelper::CollectionTable.new(@collection, :header => false)
     html = table.build do |body|
-      assert_instance_of Body, body
+      assert_instance_of PluginAWeek::TableHelper::Body, body
     end
     
     expected = <<-end_eval
-      <tbody>
-        <tr class="row">
-          <td class="title">first</td>
-        </tr>
-        <tr class="row">
-          <td class="title">second</td>
-        </tr>
-        <tr class="row">
-          <td class="title">last</td>
-        </tr>
-      </tbody>
-    end_eval
-    assert_html_equal expected, html
-  end
-  
-  def test_should_include_header_and_body_by_default
-    table = CollectionTable.new(@collection)
-    html = table.build do |header, body|
-      assert_instance_of Header, header
-      assert_instance_of Body, body
-    end
-    
-    expected = <<-end_eval
-      <thead>
-        <tr>
-          <th class="title" scope="col">Title</th>
-        </tr>
-      </thead>
       <tbody>
         <tr class="row">
           <td class="title">first</td>
@@ -109,10 +99,10 @@ class CollectionTableTest < Test::Unit::TestCase
   end
   
   def test_should_include_body_and_footer_if_no_header_and_footer
-    table = CollectionTable.new(@collection, :header => false, :footer => true)
+    table = PluginAWeek::TableHelper::CollectionTable.new(@collection, :header => false, :footer => true)
     html = table.build do |body, footer|
-      assert_instance_of Body, body
-      assert_instance_of Footer, footer
+      assert_instance_of PluginAWeek::TableHelper::Body, body
+      assert_instance_of PluginAWeek::TableHelper::Footer, footer
     end
     
     expected = <<-end_eval
@@ -136,11 +126,11 @@ class CollectionTableTest < Test::Unit::TestCase
   end
   
   def test_should_include_header_body_and_footer_if_footer
-    table = CollectionTable.new(@collection, :footer => true)
+    table = PluginAWeek::TableHelper::CollectionTable.new(@collection, :footer => true)
     html = table.build do |header, body, footer|
-      assert_instance_of Header, header
-      assert_instance_of Body, body
-      assert_instance_of Footer, footer
+      assert_instance_of PluginAWeek::TableHelper::Header, header
+      assert_instance_of PluginAWeek::TableHelper::Body, body
+      assert_instance_of PluginAWeek::TableHelper::Footer, footer
     end
     
     expected = <<-end_eval
@@ -169,7 +159,7 @@ class CollectionTableTest < Test::Unit::TestCase
   end
   
   def test_should_use_custom_class_to_generate_columns
-    table = CollectionTable.new(@collection, :class => Note)
+    table = PluginAWeek::TableHelper::CollectionTable.new(@collection, :class => Note)
     html = table.build
     
     expected = <<-end_eval
@@ -199,7 +189,7 @@ class CollectionTableTest < Test::Unit::TestCase
   
   def test_should_use_class_from_first_element_to_generate_columns
     @collection.insert(0, Note.new('zeroth'))
-    table = CollectionTable.new(@collection)
+    table = PluginAWeek::TableHelper::CollectionTable.new(@collection)
     html = table.build
     
     expected = <<-end_eval
@@ -234,7 +224,7 @@ class CollectionTableTest < Test::Unit::TestCase
   def test_should_use_class_from_proxy_reflection_to_generate_columns
     collection = NoteCollection.new
     collection.concat(@collection)
-    table = CollectionTable.new(collection)
+    table = PluginAWeek::TableHelper::CollectionTable.new(collection)
     html = table.build
     
     expected = <<-end_eval
