@@ -146,6 +146,16 @@ principles of Rails, KISS (Keep It Simple Stupid).  table_helper works really
 well when you need to quickly output several of these types of summary tables.
 If this is not the case, you may want to stick to using actual html.
 
+== Testing
+
+Before you can run any tests, the following gem must be installed:
+* plugin_test_helper[http://wiki.pluginaweek.org/Plugin_test_helper]
+
+To run against a specific version of Rails:
+
+  rake test RAILS_FRAMEWORK_ROOT=/path/to/rails
+
 == Dependencies
 
+* Rails 2.0 or later
 * set_or_append[http://wiki.pluginaweek.org/Set_or_append]
