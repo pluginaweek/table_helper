@@ -26,7 +26,7 @@ module PluginAWeek #:nodoc:
         super(html_options)
         
         @content = content
-        @html_options.set_or_prepend(:class, class_name.to_s) if class_name
+        @html_options[:class] = ("#{class_name} " + @html_options[:class].to_s).strip if class_name
         
         self.content_type = :data
       end

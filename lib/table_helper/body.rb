@@ -101,7 +101,7 @@ module PluginAWeek #:nodoc:
       
       def html #:nodoc:
         html_options = @html_options.dup
-        html_options.set_or_append(:class, 'alternate') if alternate_rows
+        html_options[:class] = (html_options[:class].to_s + ' alternate').strip if alternate_rows 
         
         content_tag(tag_name, content, html_options)
       end

@@ -1,5 +1,3 @@
-$:.unshift("#{File.dirname(__FILE__)}/../../set_or_append/lib")
-
 require 'test/unit'
 require 'rubygems'
 require 'action_controller'

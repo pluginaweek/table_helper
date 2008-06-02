@@ -35,7 +35,7 @@ module PluginAWeek #:nodoc:
         
         @header = header
         @alternate = false
-        @html_options.set_or_prepend(:class, 'row')
+        @html_options[:class] = ('row ' + @html_options[:class].to_s).strip
         
         # For each column defined in the table, see if we can prepopulate the
         # cell based on the data in the object.  If not, we can at least
@@ -53,7 +53,7 @@ module PluginAWeek #:nodoc:
       # (if specified)
       def html
         original_options = @html_options.dup
-        @html_options.set_or_append(:class, 'alternate') if alternate
+        @html_options[:class] = (@html_options[:class].to_s + ' alternate').strip if alternate
         html = super
         @html_options = original_options
         html

@@ -1,4 +1,3 @@
-require 'set_or_append'
 require 'table_helper/collection_table'
 
 module PluginAWeek #:nodoc:
