@@ -158,4 +158,3 @@ To run against a specific version of Rails:
 == Dependencies
 
 * Rails 2.0 or later
-* set_or_append[http://wiki.pluginaweek.org/Set_or_append]
