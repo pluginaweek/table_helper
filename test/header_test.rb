@@ -56,11 +56,11 @@ class HeaderTest < Test::Unit::TestCase
   def test_should_create_column_readers_if_column_names_found
     header = PluginAWeek::TableHelper::Header.new([], Post)
     
-    assert header.respond_to?(:title)
-    assert_instance_of PluginAWeek::TableHelper::Cell, header.title
+    assert_nothing_raised {header.builder.title}
+    assert_instance_of PluginAWeek::TableHelper::Cell, header.builder.title
     
-    assert header.respond_to?(:author_name)
-    assert_instance_of PluginAWeek::TableHelper::Cell, header.author_name
+    assert_nothing_raised {header.builder.title}
+    assert_instance_of PluginAWeek::TableHelper::Cell, header.builder.author_name
   end
   
   def test_should_create_column_reader_when_column_is_created
@@ -68,33 +68,33 @@ class HeaderTest < Test::Unit::TestCase
     header.column :title
     
     assert_equal ['title'], header.column_names
-    assert_instance_of PluginAWeek::TableHelper::Cell, header.title
+    assert_instance_of PluginAWeek::TableHelper::Cell, header.builder.title
   end
   
   def test_should_set_column_scope
     header = PluginAWeek::TableHelper::Header.new([])
     header.column :title
-    assert_equal 'col', header.title[:scope]
+    assert_equal 'col', header.columns['title'][:scope]
   end
   
   def test_should_allow_html_options_to_be_specified_for_new_columns
     header = PluginAWeek::TableHelper::Header.new([])
     header.column :title, 'Title', :class => 'pretty'
-    assert_equal 'title pretty', header.title[:class]
+    assert_equal 'title pretty', header.columns['title'][:class]
   end
   
   def test_should_use_column_name_for_default_content
     header = PluginAWeek::TableHelper::Header.new([])
     header.column :title
-    assert_equal '<th class="title" scope="col">Title</th>', header.title.html
+    assert_equal '<th class="title" scope="col">Title</th>', header.columns['title'].html
   end
   
   def test_should_sanitize_column_names
     header = PluginAWeek::TableHelper::Header.new([])
     header.column 'the-title'
     
-    assert header.respond_to?(:the_title)
-    assert_instance_of PluginAWeek::TableHelper::Cell, header.the_title
+    assert_nothing_raised {header.builder.the_title}
+    assert_instance_of PluginAWeek::TableHelper::Cell, header.builder.the_title
   end
   
   def test_should_clear_existing_columns_when_first_column_is_created
@@ -103,8 +103,8 @@ class HeaderTest < Test::Unit::TestCase
     
     header.column :created_on
     
-    assert !header.respond_to?(:title)
-    assert !header.respond_to?(:author_name)
+    assert_raise(NoMethodError) {header.builder.title}
+    assert_raise(NoMethodError) {header.builder.author_name}
     assert_equal ['created_on'], header.column_names
   end
   
@@ -136,6 +136,26 @@ class HeaderTest < Test::Unit::TestCase
       </thead>
     end_eval
     assert_html_equal expected, header.html
+  end
+end
+
+class HeaderWithConflictingColumnNamesTest < Test::Unit::TestCase
+  def setup
+    @header = PluginAWeek::TableHelper::Header.new([])
+    @header.column 'id'
+  end
+  
+  def test_should_be_able_to_read_cell
+    assert_instance_of PluginAWeek::TableHelper::Cell, @header.builder.id
+  end
+  
+  def test_should_be_able_to_write_to_cell
+    @header.builder.id '1'
+    assert_instance_of PluginAWeek::TableHelper::Cell, @header.builder.id
+  end
+  
+  def test_should_be_able_to_clear
+    assert_nothing_raised {@header.clear}
   end
 end
 

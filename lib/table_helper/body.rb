@@ -94,7 +94,7 @@ module PluginAWeek #:nodoc:
         row = BodyRow.new(object, @header)
         row.alternate = alternate_rows ? index.send("#{@alternate_rows}?") : false
         
-        yield row, object, index if block_given?
+        yield row.builder, object, index if block_given?
         
         row.html
       end

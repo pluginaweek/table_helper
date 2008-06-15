@@ -2,13 +2,68 @@ require 'table_helper/cell'
 
 module PluginAWeek #:nodoc:
   module TableHelper
+    # Provides a blank class that can be used to build the cells for a row
+    class RowBuilder < BlankSlate
+      reveal :respond_to?
+      
+      attr_reader :row
+      
+      # Creates a builder for the given row
+      def initialize(row)
+        @row = row
+      end
+      
+      # Proxies all missed methods to the row
+      def method_missing(*args)
+        row.send(*args)
+      end
+      
+      # Defines the builder method for the given cell name.  For example, if
+      # a cell with the name :title was defined, then the cell would be able
+      # to be read and written like so:
+      # 
+      #   row.title               #=> Accesses the title
+      #   row.title "Page Title"  #=> Creates a new cell with "Page Title" as the content
+      def define_cell(name)
+        method_name = name.gsub('-', '_')
+        
+        klass = class << self; self; end
+        klass.class_eval do
+          define_method(method_name) do |*args|
+            if args.empty?
+              row.cells[name]
+            else
+              row.cell(name, *args)
+            end
+          end
+        end unless klass.method_defined?(method_name)
+      end
+      
+      # Removes the definition for the given cell
+      def undef_cell(name)
+        method_name = name.gsub('-', '_')
+        
+        klass = class << self; self; end
+        klass.class_eval do
+          remove_method(method_name)
+        end
+      end
+    end
+    
     # Represents a single row within a table.  A row can consist of either
     # data cells or header cells.
     class Row < HtmlElement
+      # The proxy class used externally to build the actual cells
+      attr_reader :builder
+      
+      # The current cells in this row, in the order in which they will be built
+      attr_reader :cells
+      
       def initialize #:nodoc:
         super
         
         @cells = ActiveSupport::OrderedHash.new
+        @builder = RowBuilder.new(self)
       end
       
       # Creates a new cell with the given name and generates shortcut
@@ -17,55 +72,31 @@ module PluginAWeek #:nodoc:
         name = name.to_s if name
         
         cell = Cell.new(name, *args)
-        @cells[name] = cell
-        
-        define_cell_accessor(name) if name && !respond_to?(name)
+        cells[name] = cell
+        builder.define_cell(name) if name
         
         cell
       end
       
       # The names of all cells in this row
       def cell_names
-        @cells.keys
+        cells.keys
       end
       
       # Clears all of the current cells from the row
       def clear
-        cell_names.each do |name|
-          klass = class << self; self; end
-          klass.class_eval do
-            remove_method(name)
-          end
-        end
-        
-        @cells.clear
+        # Remove all of the shortcut methods
+        cell_names.each {|name| builder.undef_cell(name)}
+        cells.clear
       end
       
       private
-        # Defines the accessor method for the given cell name.  For example, if
-        # a cell with the name :title was defined, then the cell would be able
-        # to be read and written like so:
-        # 
-        #   row.title               #=> Accesses the title
-        #   row.title "Page Title"  #=> Creates a new cell with "Page Title" as the content
-        def define_cell_accessor(name)
-          instance_eval <<-end_eval
-            def #{name.gsub('-', '_')}(*args)
-              if args.empty?
-                @cells[#{name.inspect}]
-              else
-                cell(#{name.inspect}, *args)
-              end
-            end
-          end_eval
-        end
-        
         def tag_name
           'tr'
         end
         
         def content
-          @cells.values.map(&:html).join
+          cells.values.map(&:html).join
         end
     end
   end

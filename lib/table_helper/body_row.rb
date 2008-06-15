@@ -44,7 +44,7 @@ module PluginAWeek #:nodoc:
           if object.respond_to?(column)
             cell(column, object.send(column))
           else
-            define_cell_accessor(column)
+            builder.define_cell(column)
           end
         end
       end

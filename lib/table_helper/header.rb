@@ -2,11 +2,56 @@ require 'table_helper/row'
 
 module PluginAWeek #:nodoc:
   module TableHelper
+    # Provides a blank class that can be used to build the columns for a header
+    class HeaderBuilder < BlankSlate
+      reveal :respond_to?
+      
+      attr_reader :header
+      
+      # Creates a builder for the given header
+      def initialize(header)
+        @header = header
+      end
+      
+      # Proxies all missed methods to the header
+      def method_missing(*args)
+        header.send(*args)
+      end
+      
+      # Defines the accessor method for the given column name.  For example, if
+      # a column with the name :title was defined, then the column would be able
+      # to be read and written like so:
+      # 
+      #   header.title               #=> Accesses the title
+      #   header.title "Page Title"  #=> Creates a new column with "Page Title" as the content
+      def define_column(name)
+        method_name = name.to_s.gsub('-', '_')
+        
+        klass = class << self; self; end
+        klass.class_eval do
+          define_method(method_name) do |*args|
+            header.row.builder.__send__(method_name, *args)
+          end
+        end unless klass.method_defined?(method_name)
+      end
+      
+      # Removes the definition for the given cp;i,m
+      def undef_column(name)
+        klass = class << self; self; end
+        klass.class_eval do
+          remove_method(name.gsub('-', '_'))
+        end
+      end
+    end
+    
     # Represents the header of the table.  In HTML, you can think of this as
     # the <thead> tag of the table.
     class Header < HtmlElement
       # The actual header row
-      attr_reader   :row
+      attr_reader :row
+      
+      # The proxy class used externally to build the actual columns
+      attr_reader :builder
       
       # Whether or not the header should be hidden when the collection is
       # empty.  Default is true.
@@ -23,6 +68,7 @@ module PluginAWeek #:nodoc:
         
         @collection = collection
         @row = Row.new
+        @builder = HeaderBuilder.new(self)
         
         @hide_when_empty = true
         @customized = true
@@ -38,9 +84,21 @@ module PluginAWeek #:nodoc:
         end
       end
       
+      # The current columns in this header, in the order in which they will be built
+      def columns
+        row.cells
+      end
+      
       # Gets the names of all of the columns being displayed in the table
       def column_names
         row.cell_names
+      end
+      
+      # Clears all of the current columns from the header
+      def clear
+        # Remove all of the shortcut methods
+        column_names.each {|name| builder.undef_column(name)}
+        row.clear
       end
       
       # Creates a new column with the specified caption.  Columns must be
@@ -61,37 +119,16 @@ module PluginAWeek #:nodoc:
       #   header.column :title, 'The Title', :class => 'pretty'
       def column(name, *args)
         # Clear the header row if this is being customized by the user
-        if !@customized
+        unless @customized
           @customized = true
-          
-          # Remove all of the shortcut methods
-          column_names.each do |column|
-            klass = class << self; self; end
-            klass.class_eval do
-              remove_method(column)
-            end
-          end
-          
-          @row.clear
+          clear
         end
         
-        column = @row.cell(name, *args)
+        column = row.cell(name, *args)
         column.content_type = :header
         column[:scope] ||= 'col'
         
-        # Define a shortcut method to the cell
-        name = name.to_s.gsub('-', '_')
-        unless respond_to?(name)
-          instance_eval <<-end_eval
-            def #{name}(*args)
-              if args.empty?
-                @row.#{name}
-              else
-                @row.#{name}(*args)
-              end
-            end
-          end_eval
-        end
+        builder.define_column(name)
         
         column
       end
@@ -105,20 +142,21 @@ module PluginAWeek #:nodoc:
       end
       
       private
-        def tag_name
-          'thead'
-        end
-        
-        def content
-          @row.html
-        end
-        
+        # Finds the class representing the objects within the collection
         def class_for_collection(collection)
           if collection.respond_to?(:proxy_reflection)
             collection.proxy_reflection.klass
           elsif !collection.empty?
             collection.first.class
           end
+        end
+        
+        def tag_name
+          'thead'
+        end
+        
+        def content
+          @row.html
         end
     end
   end

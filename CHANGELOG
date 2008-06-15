@@ -1,5 +1,11 @@
 *SVN*
 
+*0.0.4* (June 15th, 2008)
+
+* Support cell/column names that conflict with existing method names on the Row/Header classes
+
+* Avoid string evaluation for dynamic methods
+
 *0.0.3* (June 1st, 2008)
 
 * Remove dependency on set_or_append

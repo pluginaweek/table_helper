@@ -36,7 +36,7 @@ module PluginAWeek #:nodoc:
         @body.build # Build with the defaults
         
         elements = []
-        elements << @header if @options[:header]
+        elements << @header.builder if @options[:header]
         elements << @body
         elements << @footer if @options[:footer]
         

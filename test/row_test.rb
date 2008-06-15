@@ -10,44 +10,52 @@ class RowByDefaultTest < Test::Unit::TestCase
   end
   
   def test_should_not_have_any_cells
+    assert @row.cells.empty?
+  end
+  
+  def test_should_not_have_any_cell_names
     assert_equal [], @row.cell_names
   end
+  
+  def test_should_have_a_builder
+    assert_not_nil @row.builder
+  end
 end
-
 
 class RowTest < Test::Unit::TestCase
   def setup
     @row = PluginAWeek::TableHelper::Row.new
   end
   
-  def test_should_create_reader_after_building_cell
+  def test_should_create_cell_reader_after_building_cell
     @row.cell :name
-    assert @row.respond_to?(:name)
-    assert_instance_of PluginAWeek::TableHelper::Cell, @row.name
+    assert_nothing_raised {@row.builder.name}
+    assert_instance_of PluginAWeek::TableHelper::Cell, @row.builder.name
   end
   
   def test_should_use_cell_name_for_class_name
     @row.cell :name
-    assert_equal 'name', @row.name[:class]
+    assert_equal 'name', @row.cells['name'][:class]
   end
   
   def test_should_sanitize_cell_name_for_reader_method
     @row.cell 'the-name'
     
-    assert @row.respond_to?(:the_name)
-    assert_instance_of PluginAWeek::TableHelper::Cell, @row.the_name
+    @row.builder.the_name
+    assert_nothing_raised {@row.builder.the_name}
+    assert_instance_of PluginAWeek::TableHelper::Cell, @row.builder.the_name
   end
   
   def test_should_use_unsanitized_cell_name_for_cell_class
     @row.cell 'the-name'
     assert_equal ['the-name'], @row.cell_names
-    assert_equal 'the-name', @row.the_name[:class]
+    assert_equal 'the-name', @row.cells['the-name'][:class]
   end
   
   def test_should_allow_html_options_when_building_cell
     @row.cell :name, 'Name', :class => 'pretty'
     
-    assert_equal 'name pretty', @row.name[:class]
+    assert_equal 'name pretty', @row.cells['name'][:class]
   end
 end
 
@@ -87,10 +95,10 @@ class RowWithCellsTest < Test::Unit::TestCase
   end
   
   def test_should_create_new_cell_if_cell_already_exists
-    old_cell = @row.name
+    old_cell = @row.cells['name']
     
     @row.cell :name
-    assert_not_same old_cell, @row.name
+    assert_not_same old_cell, @row.cells['name']
   end
   
   def test_should_be_able_to_read_cell_after_clearing
@@ -98,7 +106,7 @@ class RowWithCellsTest < Test::Unit::TestCase
     @row.cell :name
     
     assert_equal ['name'], @row.cell_names
-    assert @row.respond_to?(:name)
+    assert_nothing_raised {@row.builder.name}
   end
 end
 
@@ -111,5 +119,25 @@ class RowWithMultipleCellsTest < Test::Unit::TestCase
   
   def test_should_build_html
     assert_equal '<tr><td class="name">Name</td><td class="location">Location</td></tr>', @row.html
+  end
+end
+
+class RowWithConflictingCellNamesTest < Test::Unit::TestCase
+  def setup
+    @row = PluginAWeek::TableHelper::Row.new
+    @row.cell :id
+  end
+  
+  def test_should_be_able_to_read_cell
+    assert_instance_of PluginAWeek::TableHelper::Cell, @row.cells['id']
+  end
+  
+  def test_should_be_able_to_write_to_cell
+    @row.builder.id '1'
+    assert_instance_of PluginAWeek::TableHelper::Cell, @row.cells['id']
+  end
+  
+  def test_should_be_able_to_clear
+    assert_nothing_raised {@row.clear}
   end
 end
