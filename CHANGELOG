@@ -1,5 +1,9 @@
 *SVN*
 
+*0.0.5* (June 22nd, 2008)
+
+* Remove log files from gems
+
 *0.0.4* (June 15th, 2008)
 
 * Support cell/column names that conflict with existing method names on the Row/Header classes
