@@ -4,21 +4,21 @@
 
 == Resources
 
-Wiki
-
-* http://wiki.pluginaweek.org/Table_helper
-
 API
 
 * http://api.pluginaweek.org/table_helper
 
+Bugs
+
+* http://pluginaweek.lighthouseapp.com/projects/13290-table_helper
+
 Development
 
-* http://dev.pluginaweek.org/browser/trunk/table_helper
+* http://github.com/pluginaweek/table_helper
 
 Source
 
-* http://svn.pluginaweek.org/trunk/table_helper
+* git://github.com/pluginaweek/table_helper.git
 
 == Description
 
@@ -149,7 +149,7 @@ If this is not the case, you may want to stick to using actual html.
 == Testing
 
 Before you can run any tests, the following gem must be installed:
-* plugin_test_helper[http://wiki.pluginaweek.org/Plugin_test_helper]
+* plugin_test_helper[http://github.com/pluginaweek/plugin_test_helper]
 
 To run against a specific version of Rails:
 
