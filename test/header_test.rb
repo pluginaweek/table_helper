@@ -112,14 +112,14 @@ class HeaderTest < Test::Unit::TestCase
     header = PluginAWeek::TableHelper::Header.new([Post.new])
     header[:class] = 'pretty'
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead class="pretty">
         <tr>
           <th class="title" scope="col">Title</th>
           <th class="author_name" scope="col">Author Name</th>
         </tr>
       </thead>
-    end_eval
+    end_str
     assert_html_equal expected, header.html
   end
   
@@ -127,14 +127,14 @@ class HeaderTest < Test::Unit::TestCase
     header = PluginAWeek::TableHelper::Header.new([Post.new])
     header.row[:class] = 'pretty'
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr class="pretty">
           <th class="title" scope="col">Title</th>
           <th class="author_name" scope="col">Author Name</th>
         </tr>
       </thead>
-    end_eval
+    end_str
     assert_html_equal expected, header.html
   end
 end
@@ -167,24 +167,24 @@ class HeaderWithEmptyCollectionTest < Test::Unit::TestCase
   def test_should_not_display_if_hide_when_empty
     @header.hide_when_empty = true
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead style="display: none;">
         <tr>
         </tr>
       </thead>
-    end_eval
+    end_str
     assert_html_equal expected, @header.html
   end
   
   def test_should_display_if_not_hide_when_empty
     @header.hide_when_empty = false
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr>
         </tr>
       </thead>
-    end_eval
+    end_str
     assert_html_equal expected, @header.html
   end
 end
@@ -203,28 +203,28 @@ class HeaderWithCollectionTest < Test::Unit::TestCase
   def test_should_display_if_hide_when_empty
     @header.hide_when_empty = true
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr>
           <th class="title" scope="col">Title</th>
           <th class="author_name" scope="col">Author Name</th>
         </tr>
       </thead>
-    end_eval
+    end_str
     assert_html_equal expected, @header.html
   end
   
   def test_should_display_if_not_hide_when_empty
     @header.hide_when_empty = false
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr>
           <th class="title" scope="col">Title</th>
           <th class="author_name" scope="col">Author Name</th>
         </tr>
       </thead>
-    end_eval
+    end_str
     assert_html_equal expected, @header.html
   end
 end

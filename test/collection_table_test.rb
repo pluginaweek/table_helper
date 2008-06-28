@@ -19,7 +19,7 @@ class CollectionTableByDefaultTest < Test::Unit::TestCase
       assert_instance_of PluginAWeek::TableHelper::Body, body
     end
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead style="display: none;">
         <tr></tr>
       </thead>
@@ -28,7 +28,7 @@ class CollectionTableByDefaultTest < Test::Unit::TestCase
           <td>No matches found.</td>
         </tr>
       </tbody>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
 end
@@ -82,7 +82,7 @@ class CollectionTableTest < Test::Unit::TestCase
       assert_instance_of PluginAWeek::TableHelper::Body, body
     end
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tbody>
         <tr class="row">
           <td class="title">first</td>
@@ -94,7 +94,7 @@ class CollectionTableTest < Test::Unit::TestCase
           <td class="title">last</td>
         </tr>
       </tbody>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
   
@@ -105,7 +105,7 @@ class CollectionTableTest < Test::Unit::TestCase
       assert_instance_of PluginAWeek::TableHelper::Footer, footer
     end
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tbody>
         <tr class="row">
           <td class="title">first</td>
@@ -121,7 +121,7 @@ class CollectionTableTest < Test::Unit::TestCase
         <tr>
         </tr>
       </tfoot>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
   
@@ -133,7 +133,7 @@ class CollectionTableTest < Test::Unit::TestCase
       assert_instance_of PluginAWeek::TableHelper::Footer, footer
     end
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr>
           <th class="title" scope="col">Title</th>
@@ -154,7 +154,7 @@ class CollectionTableTest < Test::Unit::TestCase
         <tr>
         </tr>
       </tfoot>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
   
@@ -162,7 +162,7 @@ class CollectionTableTest < Test::Unit::TestCase
     table = PluginAWeek::TableHelper::CollectionTable.new(@collection, :class => Note)
     html = table.build
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr>
           <th class="title" scope="col">Title</th>
@@ -183,7 +183,7 @@ class CollectionTableTest < Test::Unit::TestCase
           <td class="author_name empty"></td>
         </tr>
       </tbody>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
   
@@ -192,7 +192,7 @@ class CollectionTableTest < Test::Unit::TestCase
     table = PluginAWeek::TableHelper::CollectionTable.new(@collection)
     html = table.build
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr>
           <th class="title" scope="col">Title</th>
@@ -217,7 +217,7 @@ class CollectionTableTest < Test::Unit::TestCase
           <td class="author_name empty"></td>
         </tr>
       </tbody>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
   
@@ -227,7 +227,7 @@ class CollectionTableTest < Test::Unit::TestCase
     table = PluginAWeek::TableHelper::CollectionTable.new(collection)
     html = table.build
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <thead>
         <tr>
           <th class="title" scope="col">Title</th>
@@ -248,7 +248,7 @@ class CollectionTableTest < Test::Unit::TestCase
           <td class="author_name empty"></td>
         </tr>
       </tbody>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
 end

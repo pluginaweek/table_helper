@@ -57,11 +57,11 @@ class BodyTest < Test::Unit::TestCase
         assert_equal @collection.index(post), index
       end
       
-      expected = <<-end_eval
+      expected = <<-end_str
         <tr class="row">
           <td class="title">#{post.title}</td>
         </tr>
-      end_eval
+      end_str
       assert_html_equal expected, html
     end
   end
@@ -74,11 +74,11 @@ class BodyTest < Test::Unit::TestCase
       assert_equal 1, index
     end
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="row">
         <td class="title">first</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
   
@@ -86,19 +86,19 @@ class BodyTest < Test::Unit::TestCase
     @header.column :title
     @header.column :author_name
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="row">
         <td class="title">first</td>
         <td class="author_name empty"></td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build_row(@collection.first)
   end
   
   def test_should_build_all_rows
     @header.column :title
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="row">
         <td class="title">first</td>
       </tr>
@@ -108,7 +108,7 @@ class BodyTest < Test::Unit::TestCase
       <tr class="row">
         <td class="title">last</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build
   end
   
@@ -116,7 +116,7 @@ class BodyTest < Test::Unit::TestCase
     @header.column :title
     @body.build
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tbody>
         <tr class="row">
           <td class="title">first</td>
@@ -128,7 +128,7 @@ class BodyTest < Test::Unit::TestCase
           <td class="title">last</td>
         </tr>
       </tbody>
-    end_eval
+    end_str
     assert_html_equal expected, @body.html
   end
   
@@ -137,7 +137,7 @@ class BodyTest < Test::Unit::TestCase
     @body[:class] = 'pretty'
     @body.build
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tbody class="pretty">
         <tr class="row">
           <td class="title">first</td>
@@ -149,7 +149,7 @@ class BodyTest < Test::Unit::TestCase
           <td class="title">last</td>
         </tr>
       </tbody>
-    end_eval
+    end_str
     assert_html_equal expected, @body.html
   end
 end
@@ -162,11 +162,11 @@ class BodyWithEmptyCollectionTest < Test::Unit::TestCase
   end
   
   def test_should_show_no_content
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="no_content">
         <td>No matches found.</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build
   end
   
@@ -179,11 +179,11 @@ class BodyWithEmptyCollectionTest < Test::Unit::TestCase
     @header.column :title
     @header.column :author_name
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="no_content">
         <td colspan="2">No matches found.</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build
   end
 end
@@ -211,20 +211,20 @@ class BodyWithAlternatingEvenRowsTest < Test::Unit::TestCase
   end
   
   def test_should_alternate_even_row
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="row alternate">
         <td class="title">first</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build_row(@collection.first)
   end
   
   def test_should_not_alternate_odd_row
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="row">
         <td class="title">second</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build_row(@collection[1])
   end
 end
@@ -252,20 +252,20 @@ class BodyWithAlternatingOddRowsTest < Test::Unit::TestCase
   end
   
   def test_should_alternate_odd_row
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="row alternate">
         <td class="title">second</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build_row(@collection[1])
   end
   
   def test_should_not_alternate_even_row
-    expected = <<-end_eval
+    expected = <<-end_str
       <tr class="row">
         <td class="title">first</td>
       </tr>
-    end_eval
+    end_str
     assert_html_equal expected, @body.build_row(@collection.first)
   end
 end

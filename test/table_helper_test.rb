@@ -12,7 +12,7 @@ class TableHelperTest < Test::Unit::TestCase
       end
     end
     
-    expected = <<-end_eval
+    expected = <<-end_str
       <table cellpadding="0" cellspacing="0">
         <thead>
           <tr>
@@ -31,7 +31,7 @@ class TableHelperTest < Test::Unit::TestCase
           </tr>
         </tbody>
       </table>
-    end_eval
+    end_str
     assert_html_equal expected, html
   end
 end
