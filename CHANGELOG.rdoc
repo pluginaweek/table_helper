@@ -1,29 +1,25 @@
-*SVN*
+== master
 
-*0.0.5* (June 22nd, 2008)
+== 0.0.5 / 2008-06-22
 
 * Remove log files from gems
 
-*0.0.4* (June 15th, 2008)
+== 0.0.4 / 2008-06-15
 
 * Support cell/column names that conflict with existing method names on the Row/Header classes
-
 * Avoid string evaluation for dynamic methods
 
-*0.0.3* (June 1st, 2008)
+== 0.0.3 / 2008-06-01
 
 * Remove dependency on set_or_append
 
-*0.0.2* (May 5th, 2008)
+== 0.0.2 / 2008-05-05
 
 * Updated documentation
 
-*0.0.1* (August 18th, 2007)
+== 0.0.1 / 2007-08-18
 
 * Add README documentation
-
 * Add gem dependency on set_or_append
-
 * Refactor test method names
-
 * Convert dos newlines to unix newlines
