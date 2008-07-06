@@ -140,8 +140,8 @@ these types of tables by DRYing much of the html being generated.
 
 === Caveat Emptor
 
-See the API for more information on syntax and options.  You should only use
-table_helper if it fits the needs of your application.  Remember one of the key
+See the API for more information on syntax, options, and examples.  You should only
+use table_helper if it fits the needs of your application.  Remember one of the key
 principles of Rails, KISS (Keep It Simple Stupid).  table_helper works really
 well when you need to quickly output several of these types of summary tables.
 If this is not the case, you may want to stick to using actual html.

@@ -3,7 +3,7 @@ require 'table_helper/row'
 module PluginAWeek #:nodoc:
   module TableHelper
     # Represents the header of the table.  In HTML, you can think of this as
-    # the tfoot tag of the table.
+    # the <tfoot> tag of the table.
     class Footer < HtmlElement
       # The actual footer row
       attr_reader :row

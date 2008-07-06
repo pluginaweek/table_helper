@@ -5,20 +5,6 @@ module PluginAWeek #:nodoc:
     # Represents a single row within the body of a table.  The row can consist
     # of either data cells or header cells. 
     # 
-    # == Borders
-    # 
-    # Each row has an optional special border row that can be generated either
-    # immediately before or immediately after this row.  A separate border row
-    # is usually used when you cannot express borders in the css of the row
-    # containing the data (e.g. dotted borders in Internet Explorer).
-    # 
-    # To modify the properties of the border, you can access +row.border+ like
-    # so:
-    # 
-    #   r = BodyRow.new
-    #   r.border_type = :before
-    #   r.border[:style] = 'color: #ff0000;'
-    # 
     # == Alternating rows
     # 
     # Alternating rows can be automated by setting the +alternate+ property.

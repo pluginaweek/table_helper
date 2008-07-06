@@ -32,7 +32,7 @@ module PluginAWeek #:nodoc:
       end
       
       # Indicates what type of content will be stored in this cell.  This can
-      # either be set to either :data or :header.
+      # be set to either :data or :header.
       def content_type=(value)
         raise ArgumentError, "content_type must be set to :data or :header, was: #{value.inspect}" unless [:data, :header].include?(value)
         @content_type = value

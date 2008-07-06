@@ -3,7 +3,7 @@ require 'table_helper/row'
 module PluginAWeek #:nodoc:
   module TableHelper
     # Provides a blank class that can be used to build the columns for a header
-    class HeaderBuilder < BlankSlate
+    class HeaderBuilder < BlankSlate #:nodoc:
       reveal :respond_to?
       
       attr_reader :header

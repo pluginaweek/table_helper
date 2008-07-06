@@ -6,8 +6,7 @@ module PluginAWeek #:nodoc:
     # the <tbody> tag of the table.
     class Body < HtmlElement
       # If set to :odd or :even, every odd or even-numbered row will have the
-      # class 'alternate' appended to its html attributes, respectively.
-      # Default is nil.
+      # class 'alternate' appended to its html attributes. Default is nil.
       attr_accessor :alternate_rows
       
       # The caption to display in the collection is empty
@@ -28,7 +27,7 @@ module PluginAWeek #:nodoc:
       # Builds the body of the table.  This includes the actual data that is
       # generated for each object in the collection.
       # 
-      # build expects a block that defines the data in each cell.  Each
+      # +build+ expects a block that defines the data in each cell.  Each
       # iteration of the block will provide the object being rendered, the row
       # within the table that will be built and the index of the object.  For
       # example,
@@ -42,7 +41,7 @@ module PluginAWeek #:nodoc:
       # options of the row.  For more information on doing this, see the
       # BodyRow class.
       # 
-      # If the collection is empty and +empty_caption+ is set on the Body,
+      # If the collection is empty and +empty_caption+ is set on the body,
       # then the actual body will be replaced by a single row containing the
       # html that was stored in +empty_caption+.
       # 
@@ -57,7 +56,7 @@ module PluginAWeek #:nodoc:
       #     row.category post.category.name
       #   end
       # 
-      # +row.title+ is already set to post.category so there's no need to
+      # <tt>row.title</tt> is already set to post.category so there's no need to
       # manually set the value of that cell.  However, it is always possible
       # to override the default value like so:
       # 

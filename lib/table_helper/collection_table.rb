@@ -5,9 +5,15 @@ require 'table_helper/footer'
 
 module PluginAWeek #:nodoc:
   module TableHelper
-    # Represents a table that is displaying data for multiple objects within
-    # a collection.
+    # Represents a table that displays data for multiple objects within a
+    # collection.
     class CollectionTable < HtmlElement
+      # Creates a new table based on the objects within the given collection.
+      # 
+      # Configuration options:
+      # * +class+ - The actual class of the objects contained within the collection. This is used to help build the header columns.
+      # * +header+ - Whether or not to display a header. Default is true.
+      # * +footer+ - Whether or not to display a footer. Default is false.
       def initialize(collection, options = {}, html_options = {}) #:nodoc:
         super(html_options)
         
@@ -31,7 +37,7 @@ module PluginAWeek #:nodoc:
         @footer = Footer.new(collection)
       end
       
-      # Builds the table by rendering a header, body, and footer.
+      # Builds the table by rendering a header (if enabled), body, and footer (if enabled).
       def build(&block)
         @body.build # Build with the defaults
         

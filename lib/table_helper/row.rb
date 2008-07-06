@@ -3,7 +3,7 @@ require 'table_helper/cell'
 module PluginAWeek #:nodoc:
   module TableHelper
     # Provides a blank class that can be used to build the cells for a row
-    class RowBuilder < BlankSlate
+    class RowBuilder < BlankSlate #:nodoc:
       reveal :respond_to?
       
       attr_reader :row
