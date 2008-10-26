@@ -1,5 +1,7 @@
 == master
 
+* Update tests to use ActionView::TestCase
+
 == 0.0.5 / 2008-06-22
 
 * Remove log files from gems
