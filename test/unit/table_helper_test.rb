@@ -1,7 +1,7 @@
-require File.dirname(__FILE__) + '/test_helper'
+require File.dirname(__FILE__) + '/../test_helper'
 
-class TableHelperTest < Test::Unit::TestCase
-  include PluginAWeek::TableHelper
+class TableHelperTest < ActionView::TestCase
+  tests PluginAWeek::TableHelper
   
   def test_should_build_collection_table
     html = collection_table(['first', 'second', 'last']) do |header, body|
