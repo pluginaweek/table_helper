@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class TableHelperTest < ActionView::TestCase
-  tests PluginAWeek::TableHelper
+  tests TableHelper
   
   def test_should_build_collection_table
     html = collection_table(['first', 'second', 'last']) do |header, body|

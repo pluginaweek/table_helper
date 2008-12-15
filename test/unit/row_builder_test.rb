@@ -2,8 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class RowBuilderByDefaultTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
-    @builder = PluginAWeek::TableHelper::RowBuilder.new(@row)
+    @row = TableHelper::Row.new
+    @builder = TableHelper::RowBuilder.new(@row)
   end
   
   def test_should_forward_missing_calls_to_row
@@ -13,8 +13,8 @@ end
 
 class RowBuilderWithCellsTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
-    @builder = PluginAWeek::TableHelper::RowBuilder.new(@row)
+    @row = TableHelper::Row.new
+    @builder = TableHelper::RowBuilder.new(@row)
     @builder.define_cell('first-name')
   end
   
@@ -23,8 +23,8 @@ class RowBuilderWithCellsTest < Test::Unit::TestCase
   end
   
   def test_should_read_cell_without_arguments
-    @row.cells['first-name'] = PluginAWeek::TableHelper::Cell.new('first-name')
-    assert_instance_of PluginAWeek::TableHelper::Cell, @builder.first_name
+    @row.cells['first-name'] = TableHelper::Cell.new('first-name')
+    assert_instance_of TableHelper::Cell, @builder.first_name
   end
   
   def test_should_write_cell_with_arguments
@@ -35,8 +35,8 @@ end
 
 class RowBuilderAfterUndefiningACellTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
-    @builder = PluginAWeek::TableHelper::RowBuilder.new(@row)
+    @row = TableHelper::Row.new
+    @builder = TableHelper::RowBuilder.new(@row)
     @builder.define_cell('first-name')
     @builder.undef_cell('first-name')
   end

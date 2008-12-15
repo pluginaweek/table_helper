@@ -2,8 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class BodyByDefaultTest < Test::Unit::TestCase
   def setup
-    header = PluginAWeek::TableHelper::Header.new([])
-    @body = PluginAWeek::TableHelper::Body.new([], header)
+    header = TableHelper::Header.new([])
+    @body = TableHelper::Body.new([], header)
   end
   
   def test_should_not_alternate_rows
@@ -30,8 +30,8 @@ class BodyTest < Test::Unit::TestCase
       Post.new('second'),
       Post.new('last')
     ]
-    @header = PluginAWeek::TableHelper::Header.new(@collection)
-    @body = PluginAWeek::TableHelper::Body.new(@collection, @header)
+    @header = TableHelper::Header.new(@collection)
+    @body = TableHelper::Body.new(@collection, @header)
   end
   
   def test_should_raise_exception_if_invalid_alternate_rows_specified
@@ -157,8 +157,8 @@ end
 class BodyWithEmptyCollectionTest < Test::Unit::TestCase
   def setup
     @collection = []
-    @header = PluginAWeek::TableHelper::Header.new(@collection)
-    @body = PluginAWeek::TableHelper::Body.new(@collection, @header)
+    @header = TableHelper::Header.new(@collection)
+    @body = TableHelper::Body.new(@collection, @header)
   end
   
   def test_should_show_no_content
@@ -203,10 +203,10 @@ class BodyWithAlternatingEvenRowsTest < Test::Unit::TestCase
       Post.new('second'),
       Post.new('last')
     ]
-    @header = PluginAWeek::TableHelper::Header.new(@collection)
+    @header = TableHelper::Header.new(@collection)
     @header.column :title
     
-    @body = PluginAWeek::TableHelper::Body.new(@collection, @header)
+    @body = TableHelper::Body.new(@collection, @header)
     @body.alternate_rows = :even
   end
   
@@ -244,10 +244,10 @@ class BodyWithAlternatingOddRowsTest < Test::Unit::TestCase
       Post.new('second'),
       Post.new('last')
     ]
-    @header = PluginAWeek::TableHelper::Header.new(@collection)
+    @header = TableHelper::Header.new(@collection)
     @header.column :title
     
-    @body = PluginAWeek::TableHelper::Body.new(@collection, @header)
+    @body = TableHelper::Body.new(@collection, @header)
     @body.alternate_rows = :odd
   end
   

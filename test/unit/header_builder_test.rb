@@ -2,8 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class HeaderBuilderByDefaultTest < Test::Unit::TestCase
   def setup
-    @header = PluginAWeek::TableHelper::Header.new([])
-    @builder = PluginAWeek::TableHelper::HeaderBuilder.new(@header)
+    @header = TableHelper::Header.new([])
+    @builder = TableHelper::HeaderBuilder.new(@header)
   end
   
   def test_should_forward_missing_calls_to_row
@@ -13,10 +13,10 @@ end
 
 class HeaderBuilderWithColumnsTest < Test::Unit::TestCase
   def setup
-    @header = PluginAWeek::TableHelper::Header.new([])
+    @header = TableHelper::Header.new([])
     @header.row.cell 'first-name'
     
-    @builder = PluginAWeek::TableHelper::HeaderBuilder.new(@header)
+    @builder = TableHelper::HeaderBuilder.new(@header)
     @builder.define_column('first-name')
   end
   
@@ -25,7 +25,7 @@ class HeaderBuilderWithColumnsTest < Test::Unit::TestCase
   end
   
   def test_should_read_column_without_arguments
-    assert_instance_of PluginAWeek::TableHelper::Cell, @builder.first_name
+    assert_instance_of TableHelper::Cell, @builder.first_name
   end
   
   def test_should_write_cell_with_arguments
@@ -36,8 +36,8 @@ end
 
 class RowBuilderAfterUndefiningAColumnTest < Test::Unit::TestCase
   def setup
-    @header = PluginAWeek::TableHelper::Header.new([])
-    @builder = PluginAWeek::TableHelper::HeaderBuilder.new(@header)
+    @header = TableHelper::Header.new([])
+    @builder = TableHelper::HeaderBuilder.new(@header)
     @builder.define_column('first-name')
     @builder.undef_column('first-name')
   end

@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class FooterByDefaultTest < Test::Unit::TestCase
   def setup
-    @footer = PluginAWeek::TableHelper::Footer.new([])
+    @footer = TableHelper::Footer.new([])
   end
   
   def test_should_hdie_when_empty
@@ -12,7 +12,7 @@ end
 
 class FooterTest < Test::Unit::TestCase
   def setup
-    @footer = PluginAWeek::TableHelper::Footer.new([1])
+    @footer = TableHelper::Footer.new([1])
   end
   
   def test_should_include_custom_attributes
@@ -43,7 +43,7 @@ end
 
 class FooterWithEmptyCollectionTest < Test::Unit::TestCase
   def setup
-    @footer = PluginAWeek::TableHelper::Footer.new([])
+    @footer = TableHelper::Footer.new([])
   end
  
   def test_should_not_display_if_hide_when_empty

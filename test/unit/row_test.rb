@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class RowByDefaultTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
+    @row = TableHelper::Row.new
   end
   
   def test_should_not_set_any_html_options
@@ -24,13 +24,13 @@ end
 
 class RowTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
+    @row = TableHelper::Row.new
   end
   
   def test_should_create_cell_reader_after_building_cell
     @row.cell :name
     assert_nothing_raised {@row.builder.name}
-    assert_instance_of PluginAWeek::TableHelper::Cell, @row.builder.name
+    assert_instance_of TableHelper::Cell, @row.builder.name
   end
   
   def test_should_use_cell_name_for_class_name
@@ -43,7 +43,7 @@ class RowTest < Test::Unit::TestCase
     
     @row.builder.the_name
     assert_nothing_raised {@row.builder.the_name}
-    assert_instance_of PluginAWeek::TableHelper::Cell, @row.builder.the_name
+    assert_instance_of TableHelper::Cell, @row.builder.the_name
   end
   
   def test_should_use_unsanitized_cell_name_for_cell_class
@@ -61,7 +61,7 @@ end
 
 class RowWithoutCellsTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
+    @row = TableHelper::Row.new
   end
   
   def test_should_be_able_to_clear_cells
@@ -76,7 +76,7 @@ end
 
 class RowWithCellsTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
+    @row = TableHelper::Row.new
     @row.cell :name
   end
   
@@ -112,7 +112,7 @@ end
 
 class RowWithMultipleCellsTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
+    @row = TableHelper::Row.new
     @row.cell :name
     @row.cell :location
   end
@@ -124,17 +124,17 @@ end
 
 class RowWithConflictingCellNamesTest < Test::Unit::TestCase
   def setup
-    @row = PluginAWeek::TableHelper::Row.new
+    @row = TableHelper::Row.new
     @row.cell :id
   end
   
   def test_should_be_able_to_read_cell
-    assert_instance_of PluginAWeek::TableHelper::Cell, @row.cells['id']
+    assert_instance_of TableHelper::Cell, @row.cells['id']
   end
   
   def test_should_be_able_to_write_to_cell
     @row.builder.id '1'
-    assert_instance_of PluginAWeek::TableHelper::Cell, @row.cells['id']
+    assert_instance_of TableHelper::Cell, @row.cells['id']
   end
   
   def test_should_be_able_to_clear

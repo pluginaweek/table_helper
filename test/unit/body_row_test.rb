@@ -2,8 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class BodyRowByDefaultTest < Test::Unit::TestCase
   def setup
-    header = PluginAWeek::TableHelper::Header.new([])
-    @row = PluginAWeek::TableHelper::BodyRow.new(Object.new, header)
+    header = TableHelper::Header.new([])
+    @row = TableHelper::BodyRow.new(Object.new, header)
   end
   
   def test_should_not_alternate
@@ -23,9 +23,9 @@ class BodyRowTest < Test::Unit::TestCase
   end
   
   def setup
-    header = PluginAWeek::TableHelper::Header.new([])
+    header = TableHelper::Header.new([])
     header.column :title
-    @row = PluginAWeek::TableHelper::BodyRow.new(Post.new, header)
+    @row = TableHelper::BodyRow.new(Post.new, header)
   end
   
   def test_should_generate_cell_accessors
@@ -40,8 +40,8 @@ end
 
 class BodyRowWithNoColumnsTest < Test::Unit::TestCase
   def setup
-    header = PluginAWeek::TableHelper::Header.new([])
-    @row = PluginAWeek::TableHelper::BodyRow.new(Object.new, header)
+    header = TableHelper::Header.new([])
+    @row = TableHelper::BodyRow.new(Object.new, header)
   end
   
   def test_should_not_build_cells
@@ -57,10 +57,10 @@ class BodyRowWithCustomAttributeTest < Test::Unit::TestCase
   end
   
   def setup
-    header = PluginAWeek::TableHelper::Header.new([])
+    header = TableHelper::Header.new([])
     header.column :title
     header.column :author_name
-    @row = PluginAWeek::TableHelper::BodyRow.new(Post.new, header)
+    @row = TableHelper::BodyRow.new(Post.new, header)
   end
   
   def test_should_use_attribute_values_as_cell_content
@@ -71,10 +71,10 @@ end
 
 class BodyRowWithMissingCellsTest < Test::Unit::TestCase
   def setup
-    header = PluginAWeek::TableHelper::Header.new([])
+    header = TableHelper::Header.new([])
     header.column :title
     header.column :author_name
-    @row = PluginAWeek::TableHelper::BodyRow.new(Object.new, header)
+    @row = TableHelper::BodyRow.new(Object.new, header)
   end
   
   def test_should_build_missing_cells_if_cells_not_specified
@@ -94,8 +94,8 @@ end
 
 class BodyRowAlternatingTest < Test::Unit::TestCase
   def setup
-    header = PluginAWeek::TableHelper::Header.new([])
-    @row = PluginAWeek::TableHelper::BodyRow.new(Object.new, header)
+    header = TableHelper::Header.new([])
+    @row = TableHelper::BodyRow.new(Object.new, header)
     @row.alternate = true
   end
   

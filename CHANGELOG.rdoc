@@ -1,5 +1,6 @@
 == master
 
+* Remove the PluginAWeek namespace
 * Update tests to use ActionView::TestCase
 
 == 0.0.5 / 2008-06-22
