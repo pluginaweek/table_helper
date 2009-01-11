@@ -165,9 +165,12 @@ module TableHelper
   # 
   # Configuration options:
   # 
-  # * +class+ - Specify the type of objects expected in the collection if it can't be guessed from its contents.
-  # * +header+ - Specify if a header (thead) should be built into the table.  Default is true.
-  # * +footer+ - Specify if a footer (tfoot) should be built into the table.  Default is false.
+  # * <tt>:class</tt> - Specify the type of objects expected in the collection
+  #   if it can't be guessed from its contents.
+  # * <tt>:header</tt> - Specify if a header (thead) should be built into the
+  #   table.  Default is true.
+  # * <tt>:footer</tt> - Specify if a footer (tfoot) should be built into the
+  #   table.  Default is false.
   def collection_table(collection, options = {}, html_options = {}, &block)
     table = CollectionTable.new(collection, options, html_options)
     table.build(&block)

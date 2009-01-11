@@ -10,9 +10,10 @@ module TableHelper
     # Creates a new table based on the objects within the given collection.
     # 
     # Configuration options:
-    # * +class+ - The actual class of the objects contained within the collection. This is used to help build the header columns.
-    # * +header+ - Whether or not to display a header. Default is true.
-    # * +footer+ - Whether or not to display a footer. Default is false.
+    # * <tt>:class</tt> - The actual class of the objects contained within the
+    #   collection. This is used to help build the header columns.
+    # * <tt>:header</tt> - Whether or not to display a header. Default is true.
+    # * <tt>:footer</tt> - Whether or not to display a footer. Default is false.
     def initialize(collection, options = {}, html_options = {}) #:nodoc:
       super(html_options)
       
