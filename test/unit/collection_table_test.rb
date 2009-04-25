@@ -18,6 +18,16 @@ class CollectionTableByDefaultTest < Test::Unit::TestCase
     assert_equal 'ui-collection', @table[:class]
   end
   
+  def test_should_use_custom_collection_css_class_if_specified
+    original_collection_class = TableHelper::CollectionTable.collection_class
+    TableHelper::CollectionTable.collection_class = 'ui-records'
+    
+    table = TableHelper::CollectionTable.new(@collection)
+    assert_equal 'ui-records', table[:class]
+  ensure
+    TableHelper::CollectionTable.collection_class = original_collection_class
+  end
+  
   def test_should_not_have_a_klass
     assert_nil @table.klass
   end
