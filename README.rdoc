@@ -71,12 +71,12 @@ these types of tables by DRYing much of the html being generated.
       t.header :num_comments, '# Comments'
       t.header :num_trackbacks, '# Trackbacks'
       
-      t.rows.alternate = true
+      t.rows.alternate = :odd
       t.rows.each do |row, post, index|
         # Notice there's no need to explicitly define the title
         row.category       post.category.name
         row.author         post.author.name
-        row.publish_date   time_ago_in_words(post.published_on)
+        row.publish_date   time_ago_in_words(post.published_at)
         row.num_comments   post.comments.empty? ? '-' : post.comments.size
         row.num_trackbacks post.trackbacks.empty? ? '-' : post.trackbacks.size
       end
@@ -110,7 +110,8 @@ these types of tables by DRYing much of the html being generated.
     </tr>
     <tr class="post ui-collection-result ui-state-alternate">
       <td class="post-title">5 reasons you should care about Rails</td>
-      <td class="post-category">Rails</td><td class="author">John Q. Public</td>
+      <td class="post-category">Rails</td>
+      <td class="post-author">John Q. PUblic</td>
       <td class="post-publish_date">21 days</td>
       <td class="post-num_comments">-</td>
       <td class="post-num_trackbacks">-</td>
@@ -140,6 +141,12 @@ these types of tables by DRYing much of the html being generated.
       <td class="post-num_trackbacks">-</td>
     </tr>
   </tbody>
+  <tfoot>
+    <tr>
+      <td class="post-num_comments">0</td>
+      <td class="post-num_trackbacks">0</td>
+    </tr>
+  </tfoot>
   </table>
 
 === Caveat Emptor

@@ -29,7 +29,7 @@ module TableHelper
   # 
   # ...is compiled to (formatted here for the sake of sanity):
   # 
-  #   <table cellpadding="0" cellspacing="0" class="people ui-collection">
+  #   <table cellpadding="0" cellspacing="0" class="posts ui-collection">
   #   <thead>
   #     <tr>
   #       <th class="person-first_name" scope="col">First Name</th>
@@ -68,11 +68,11 @@ module TableHelper
   #       t.header :num_comments, '# Comments'
   #       t.header :num_trackbacks, '# Trackbacks'
   #       
-  #       t.rows.alternate = true
+  #       t.rows.alternate = :odd
   #       t.rows.each do |row, post, index|
   #         row.category       post.category.name
   #         row.author         post.author.name
-  #         row.publish_date   time_ago_in_words(post.published_on)
+  #         row.publish_date   time_ago_in_words(post.published_at)
   #         row.num_comments   post.comments.empty? ? '-' : post.comments.size
   #         row.num_trackbacks post.trackbacks.empty? ? '-' : post.trackbacks.size
   #       end
@@ -150,11 +150,11 @@ module TableHelper
   #       t.header :num_comments, '# Comments'
   #       t.header :num_trackbacks, '# Trackbacks'
   #       
-  #       t.rows.alternate = true
+  #       t.rows.alternate = :odd
   #       t.rows.each do |row, post, index|
   #         row.category       post.category.name
   #         row.author         post.author.name
-  #         row.publish_date   time_ago_in_words(post.published_on)
+  #         row.publish_date   time_ago_in_words(post.published_at)
   #         row.num_comments   post.comments.empty? ? '-' : post.comments.size
   #         row.num_trackbacks post.trackbacks.empty? ? '-' : post.trackbacks.size
   #       end
@@ -166,7 +166,7 @@ module TableHelper
   # 
   # ...is compiled to:
   # 
-  #   <table cellpadding="0" cellspacing="0" class="people ui-collection">
+  #   <table cellpadding="0" cellspacing="0" class="posts ui-collection">
   #   <thead>
   #     <tr>
   #       <th class="post-title" scope="col">Title</th>
