@@ -2,7 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class HeaderByDefaultTest < Test::Unit::TestCase
   def setup
-    @header = TableHelper::Header.new([])
+    @table = TableHelper::CollectionTable.new([])
+    @header = TableHelper::Header.new(@table)
   end
   
   def test_should_hide_when_empty
@@ -10,158 +11,149 @@ class HeaderByDefaultTest < Test::Unit::TestCase
   end
   
   def test_should_have_no_columns
+    expected = {}
+    assert_equal expected, @header.columns
+  end
+  
+  def test_should_have_no_column_names
     assert_equal [], @header.column_names
+  end
+  
+  def test_should_be_empty
+    assert @header.empty?
+  end
+  
+  def test_should_have_a_row
+    assert_not_nil @header.row
+  end
+  
+  def test_should_have_a_table
+    assert_equal @table, @header.table
   end
 end
 
-class HeaderTest < Test::Unit::TestCase
+class HeaderWithColumnDetectionTest < Test::Unit::TestCase
   class Post
     def self.column_names
       ['title', 'author_name']
     end
   end
   
-  class Reflection
-    def klass
-      Post
-    end
-  end
-  
-  class PostCollection < Array
-    def proxy_reflection
-      Reflection.new
-    end
-  end
-  
-  def test_should_use_class_columns_if_class_has_column_names
-    header = TableHelper::Header.new([], Post)
+  def test_should_have_columns_if_class_has_column_names
+    table = TableHelper::CollectionTable.new([], Post)
+    header = TableHelper::Header.new(table)
+    
     assert_equal ['title', 'author_name'], header.column_names
   end
   
-  def test_should_have_no_column_names_if_class_has_no_column_names
-    header = TableHelper::Header.new([], Array)
-    assert_equal [], header.column_names
-  end
-  
-  def test_should_use_class_columns_if_collection_has_objects
-    header = TableHelper::Header.new([Post.new])
-    assert_equal ['title', 'author_name'], header.column_names
-  end
-  
-  def test_should_use_class_columns_if_collection_is_proxy
-    header = TableHelper::Header.new(PostCollection.new)
-    assert_equal ['title', 'author_name'], header.column_names
-  end
-  
-  def test_should_create_column_readers_if_column_names_found
-    header = TableHelper::Header.new([], Post)
+  def test_should_not_have_columns_if_class_has_no_column_names
+    table = TableHelper::CollectionTable.new([], Array)
+    header = TableHelper::Header.new(table)
     
-    assert_nothing_raised {header.builder.title}
-    assert_instance_of TableHelper::Cell, header.builder.title
-    
-    assert_nothing_raised {header.builder.title}
-    assert_instance_of TableHelper::Cell, header.builder.author_name
-  end
-  
-  def test_should_create_column_reader_when_column_is_created
-    header = TableHelper::Header.new([])
-    header.column :title
-    
-    assert_equal ['title'], header.column_names
-    assert_instance_of TableHelper::Cell, header.builder.title
-  end
-  
-  def test_should_set_column_scope
-    header = TableHelper::Header.new([])
-    header.column :title
-    assert_equal 'col', header.columns['title'][:scope]
-  end
-  
-  def test_should_allow_html_options_to_be_specified_for_new_columns
-    header = TableHelper::Header.new([])
-    header.column :title, 'Title', :class => 'pretty'
-    assert_equal 'title pretty', header.columns['title'][:class]
-  end
-  
-  def test_should_use_column_name_for_default_content
-    header = TableHelper::Header.new([])
-    header.column :title
-    assert_equal '<th class="title" scope="col">Title</th>', header.columns['title'].html
-  end
-  
-  def test_should_sanitize_column_names
-    header = TableHelper::Header.new([])
-    header.column 'the-title'
-    
-    assert_nothing_raised {header.builder.the_title}
-    assert_instance_of TableHelper::Cell, header.builder.the_title
-  end
-  
-  def test_should_clear_existing_columns_when_first_column_is_created
-    header = TableHelper::Header.new([], Post)
-    assert_equal ['title', 'author_name'], header.column_names
-    
-    header.column :created_on
-    
-    assert_raise(NoMethodError) {header.builder.title}
-    assert_raise(NoMethodError) {header.builder.author_name}
-    assert_equal ['created_on'], header.column_names
-  end
-  
-  def test_should_include_html_options
-    header = TableHelper::Header.new([Post.new])
-    header[:class] = 'pretty'
-    
-    expected = <<-end_str
-      <thead class="pretty">
-        <tr>
-          <th class="title" scope="col">Title</th>
-          <th class="author_name" scope="col">Author Name</th>
-        </tr>
-      </thead>
-    end_str
-    assert_html_equal expected, header.html
-  end
-  
-  def test_should_include_html_options_for_header_row
-    header = TableHelper::Header.new([Post.new])
-    header.row[:class] = 'pretty'
-    
-    expected = <<-end_str
-      <thead>
-        <tr class="pretty">
-          <th class="title" scope="col">Title</th>
-          <th class="author_name" scope="col">Author Name</th>
-        </tr>
-      </thead>
-    end_str
-    assert_html_equal expected, header.html
+    assert header.columns.empty?
   end
 end
 
-class HeaderWithConflictingColumnNamesTest < Test::Unit::TestCase
+class HeaderWithAutomaticColumnsTest < Test::Unit::TestCase
+  class Post
+    def self.column_names
+      ['title', 'author_name']
+    end
+  end
+  
   def setup
-    @header = TableHelper::Header.new([])
-    @header.column 'id'
+    table = TableHelper::CollectionTable.new([Post.new], Post)
+    @header = TableHelper::Header.new(table)
   end
   
-  def test_should_be_able_to_read_cell
-    assert_instance_of TableHelper::Cell, @header.builder.id
+  def test_should_use_titleized_name_for_content
+    assert_equal 'Title', @header.columns['title'].content
+    assert_equal 'Author Name', @header.columns['author_name'].content
   end
   
-  def test_should_be_able_to_write_to_cell
-    @header.builder.id '1'
-    assert_instance_of TableHelper::Cell, @header.builder.id
+  def test_should_namespace_html_classes
+    assert_equal 'post-title', @header.columns['title'][:class]
+    assert_equal 'post-author_name', @header.columns['author_name'][:class]
   end
   
-  def test_should_be_able_to_clear
-    assert_nothing_raised {@header.clear}
+  def test_should_not_be_empty
+    assert !@header.empty?
+  end
+  
+  def test_should_build_html
+    expected = <<-end_str
+      <thead>
+        <tr>
+          <th class="post-title" scope="col">Title</th>
+          <th class="post-author_name" scope="col">Author Name</th>
+        </tr>
+      </thead>
+    end_str
+    assert_html_equal expected, @header.html
+  end
+  
+  def test_should_clear_existing_columns_when_first_column_is_created
+    cell = @header.column :created_on
+    
+    assert_raise(NoMethodError) {@header.builder.title}
+    assert_raise(NoMethodError) {@header.builder.author_name}
+    
+    expected = {'created_on' => cell}
+    assert_equal expected, @header.columns
+  end
+end
+
+class HeaderWithCustomColumnsTest < Test::Unit::TestCase
+  def setup
+    table = TableHelper::CollectionTable.new([])
+    @header = TableHelper::Header.new(table)
+    @title = @header.column :title
+  end
+  
+  def test_should_set_scope
+    assert_equal 'col', @title[:scope]
+  end
+  
+  def test_should_use_name_for_default_content
+    assert_equal 'Title', @title.content
+  end
+  
+  def test_should_allow_content_to_be_customized
+    title = @header.column :title, 'The Title'
+    assert_equal 'The Title', title.content
+  end
+  
+  def test_should_allow_html_options_to_be_customized
+    title = @header.column :title, :class => 'pretty'
+    assert_equal 'pretty title', title[:class]
+  end
+  
+  def test_should_not_be_empty
+    assert !@header.empty?
+  end
+end
+
+class HeaderWithMultipleColumnsTest < Test::Unit::TestCase
+  def setup
+    table = TableHelper::CollectionTable.new([])
+    @header = TableHelper::Header.new(table)
+    @title, @author_name = @header.column :title, :author_name, :class => 'pretty'
+  end
+  
+  def test_should_use_default_content_for_each
+    assert_equal 'Title', @title.content
+    assert_equal 'Author Name', @author_name.content
+  end
+  
+  def test_should_share_html_options
+    assert_equal 'pretty title', @title[:class]
   end
 end
 
 class HeaderWithEmptyCollectionTest < Test::Unit::TestCase
   def setup
-    @header = TableHelper::Header.new([])
+    table = TableHelper::CollectionTable.new([])
+    @header = TableHelper::Header.new(table)
   end
   
   def test_should_not_display_if_hide_when_empty
@@ -190,14 +182,10 @@ class HeaderWithEmptyCollectionTest < Test::Unit::TestCase
 end
 
 class HeaderWithCollectionTest < Test::Unit::TestCase
-  class Post
-    def self.column_names
-      ['title', 'author_name']
-    end
-  end
-  
   def setup
-    @header = TableHelper::Header.new([Post.new])
+    table = TableHelper::CollectionTable.new([Object.new])
+    @header = TableHelper::Header.new(table)
+    @header.column :title, :author_name
   end
   
   def test_should_display_if_hide_when_empty
@@ -206,8 +194,8 @@ class HeaderWithCollectionTest < Test::Unit::TestCase
     expected = <<-end_str
       <thead>
         <tr>
-          <th class="title" scope="col">Title</th>
-          <th class="author_name" scope="col">Author Name</th>
+          <th class="object-title" scope="col">Title</th>
+          <th class="object-author_name" scope="col">Author Name</th>
         </tr>
       </thead>
     end_str
@@ -220,8 +208,42 @@ class HeaderWithCollectionTest < Test::Unit::TestCase
     expected = <<-end_str
       <thead>
         <tr>
-          <th class="title" scope="col">Title</th>
-          <th class="author_name" scope="col">Author Name</th>
+          <th class="object-title" scope="col">Title</th>
+          <th class="object-author_name" scope="col">Author Name</th>
+        </tr>
+      </thead>
+    end_str
+    assert_html_equal expected, @header.html
+  end
+end
+
+class HeaderWithCustomHtmlOptionsTest < Test::Unit::TestCase
+  def setup
+    table = TableHelper::CollectionTable.new([Object.new])
+    @header = TableHelper::Header.new(table)
+    @header.column :title
+  end
+  
+  def test_should_include_html_options
+    @header[:class] = 'pretty'
+    
+    expected = <<-end_str
+      <thead class="pretty">
+        <tr>
+          <th class="object-title" scope="col">Title</th>
+        </tr>
+      </thead>
+    end_str
+    assert_html_equal expected, @header.html
+  end
+  
+  def test_should_include_html_options_for_header_row
+    @header.row[:class] = 'pretty'
+    
+    expected = <<-end_str
+      <thead>
+        <tr class="pretty">
+          <th class="object-title" scope="col">Title</th>
         </tr>
       </thead>
     end_str

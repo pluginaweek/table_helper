@@ -2,7 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class CollectionTableByDefaultTest < Test::Unit::TestCase
   def setup
-    @table = TableHelper::CollectionTable.new([])
+    @collection = []
+    @table = TableHelper::CollectionTable.new(@collection)
   end
   
   def test_cellspacing_should_be_zero
@@ -13,242 +14,205 @@ class CollectionTableByDefaultTest < Test::Unit::TestCase
     assert_equal '0', @table[:cellpadding]
   end
   
-  def test_should_include_header_and_footer
-    html = @table.build do |header, body|
-      assert_instance_of TableHelper::Header, header
-      assert_instance_of TableHelper::Body, body
-    end
-    
-    expected = <<-end_str
-      <thead style="display: none;">
-        <tr></tr>
-      </thead>
-      <tbody>
-        <tr class="no_content">
-          <td>No matches found.</td>
-        </tr>
-      </tbody>
-    end_str
-    assert_html_equal expected, html
+  def test_should_have_a_css_class
+    assert_equal 'ui-collection', @table[:class]
+  end
+  
+  def test_should_not_have_a_klass
+    assert_nil @table.klass
+  end
+  
+  def test_should_not_have_an_object_name
+    assert_nil @table.object_name
+  end
+  
+  def test_should_have_a_collection
+    assert_equal @collection, @table.collection
+  end
+  
+  def test_should_have_a_header
+    assert_not_nil @table.header
+    assert_instance_of TableHelper::Header, @table.header
+  end
+  
+  def test_should_have_a_body
+    assert_not_nil @table.rows
+    assert_instance_of TableHelper::Body, @table.rows
+  end
+  
+  def test_should_have_a_footer
+    assert_not_nil @table.footer
+    assert_instance_of TableHelper::Footer, @table.footer
+  end
+  
+  def test_should_be_empty
+    assert @table.empty?
   end
 end
 
 class CollectionTableTest < Test::Unit::TestCase
-  class Note
-    def self.column_names
-      ['title', 'author_name']
-    end
+  def test_should_accept_block_with_self_as_argument
+    args = nil
+    table = TableHelper::CollectionTable.new([]) {|*args|}
     
-    attr_accessor :title
-    
-    def initialize(title)
-      @title = title
-    end
+    assert_equal [table], args
   end
-  
-  class Post < Note
-    def self.column_names
-      ['title']
-    end
+end
+
+class CollectionTableWithClassDetectionTest < Test::Unit::TestCase
+  class Post
   end
   
   class Reflection
     def klass
-      Note
+      Post
     end
   end
   
-  class NoteCollection < Array
+  class PostCollection < Array
     def proxy_reflection
       Reflection.new
     end
   end
   
+  def test_should_not_detect_class_if_collection_is_empty_vanilla_array
+    table = TableHelper::CollectionTable.new([])
+    assert_nil table.klass
+  end
+  
+  def test_should_detect_class_if_collection_has_objects
+    table = TableHelper::CollectionTable.new([Post.new])
+    assert_equal Post, table.klass
+  end
+  
+  def test_should_detect_class_if_collection_is_model_proxy
+    table = TableHelper::CollectionTable.new(PostCollection.new)
+    assert_equal Post, table.klass
+  end
+end
+
+class CollectionTableWithClassTest < Test::Unit::TestCase
+  class Post
+  end
+  
   def setup
-    @collection = [
-      Post.new('first'),
-      Post.new('second'),
-      Post.new('last')
-    ]
+    @table = TableHelper::CollectionTable.new([], Post)
   end
   
-  def test_should_raise_exception_if_invalid_option_specified
-    assert_raise(ArgumentError) {TableHelper::CollectionTable.new([], :invalid => true)}
+  def test_should_have_klass
+    assert_equal Post, @table.klass
   end
   
-  def test_should_only_include_body_if_no_header
-    table = TableHelper::CollectionTable.new(@collection, :header => false)
-    html = table.build do |body|
-      assert_instance_of TableHelper::Body, body
-    end
+  def test_should_have_object_name
+    assert_equal 'post', @table.object_name
+  end
+  
+  def test_should_include_pluralized_object_name_in_css_class
+    assert_equal 'posts ui-collection', @table[:class]
+  end
+end
+
+class CollectionTableWithEmptyCollectionTest < Test::Unit::TestCase
+  def setup
+    @table = TableHelper::CollectionTable.new([])
+  end
+  
+  def test_should_be_empty
+    assert @table.empty?
+  end
+  
+  def test_should_build_html
+    expected = <<-end_str
+      <table cellpadding="0" cellspacing="0" class="ui-collection">
+        <tbody>
+          <tr class="ui-collection-empty"><td>No matches found.</td></tr>
+        </tbody>
+      </table>
+    end_str
+    assert_html_equal expected, @table.html
+  end
+end
+
+class CollectionTableWithObjectsTest < Test::Unit::TestCase
+  def setup
+    @table = TableHelper::CollectionTable.new([Object.new])
+  end
+  
+  def test_should_not_be_empty
+    assert !@table.empty?
+  end
+end
+
+class CollectionTableHeaderTest < Test::Unit::TestCase
+  def setup
+    @table = TableHelper::CollectionTable.new([Object.new])
+  end
+  
+  def test_should_not_include_in_html_if_none_specified
+    expected = <<-end_str
+      <table cellpadding="0" cellspacing="0" class="objects ui-collection">
+        <tbody>
+          <tr class="object ui-collection-result"></tr>
+        </tbody>
+      </table>
+    end_str
+    assert_html_equal expected, @table.html
+  end
+  
+  def test_should_include_in_html_if_specified
+    @table.header :name, :title
     
     expected = <<-end_str
-      <tbody>
-        <tr class="row">
-          <td class="title">first</td>
-        </tr>
-        <tr class="row">
-          <td class="title">second</td>
-        </tr>
-        <tr class="row">
-          <td class="title">last</td>
-        </tr>
-      </tbody>
+      <table cellpadding="0" cellspacing="0" class="objects ui-collection">
+        <thead>
+          <tr>
+            <th class="object-name" scope="col">Name</th>
+            <th class="object-title" scope="col">Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="object ui-collection-result">
+            <td class="object-name ui-state-empty"></td>
+            <td class="object-title ui-state-empty"></td>
+          </tr>
+        </tbody>
+      </table>
     end_str
-    assert_html_equal expected, html
+    assert_html_equal expected, @table.html
+  end
+end
+
+class CollectionTableFooterTest < Test::Unit::TestCase
+  def setup
+    @table = TableHelper::CollectionTable.new([Object.new])
   end
   
-  def test_should_include_body_and_footer_if_no_header_and_footer
-    table = TableHelper::CollectionTable.new(@collection, :header => false, :footer => true)
-    html = table.build do |body, footer|
-      assert_instance_of TableHelper::Body, body
-      assert_instance_of TableHelper::Footer, footer
-    end
-    
+  def test_should_not_include_in_html_if_none_specified
     expected = <<-end_str
-      <tbody>
-        <tr class="row">
-          <td class="title">first</td>
-        </tr>
-        <tr class="row">
-          <td class="title">second</td>
-        </tr>
-        <tr class="row">
-          <td class="title">last</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-        </tr>
-      </tfoot>
+      <table cellpadding="0" cellspacing="0" class="objects ui-collection">
+        <tbody>
+          <tr class="object ui-collection-result"></tr>
+        </tbody>
+      </table>
     end_str
-    assert_html_equal expected, html
+    assert_html_equal expected, @table.html
   end
   
-  def test_should_include_header_body_and_footer_if_footer
-    table = TableHelper::CollectionTable.new(@collection, :footer => true)
-    html = table.build do |header, body, footer|
-      assert_instance_of TableHelper::Header, header
-      assert_instance_of TableHelper::Body, body
-      assert_instance_of TableHelper::Footer, footer
-    end
+  def test_should_include_in_html_if_specified
+    @table.footer :total, 1
     
     expected = <<-end_str
-      <thead>
-        <tr>
-          <th class="title" scope="col">Title</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="row">
-          <td class="title">first</td>
-        </tr>
-        <tr class="row">
-          <td class="title">second</td>
-        </tr>
-        <tr class="row">
-          <td class="title">last</td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-        </tr>
-      </tfoot>
+      <table cellpadding="0" cellspacing="0" class="objects ui-collection">
+        <tbody>
+          <tr class="object ui-collection-result"></tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td class="object-total">1</td>
+          </tr>
+        </tfoot>
+      </table>
     end_str
-    assert_html_equal expected, html
-  end
-  
-  def test_should_use_custom_class_to_generate_columns
-    table = TableHelper::CollectionTable.new(@collection, :class => Note)
-    html = table.build
-    
-    expected = <<-end_str
-      <thead>
-        <tr>
-          <th class="title" scope="col">Title</th>
-          <th class="author_name" scope="col">Author Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="row">
-          <td class="title">first</td>
-          <td class="author_name empty"></td>
-        </tr>
-        <tr class="row">
-          <td class="title">second</td>
-          <td class="author_name empty"></td>
-        </tr>
-        <tr class="row">
-          <td class="title">last</td>
-          <td class="author_name empty"></td>
-        </tr>
-      </tbody>
-    end_str
-    assert_html_equal expected, html
-  end
-  
-  def test_should_use_class_from_first_element_to_generate_columns
-    @collection.insert(0, Note.new('zeroth'))
-    table = TableHelper::CollectionTable.new(@collection)
-    html = table.build
-    
-    expected = <<-end_str
-      <thead>
-        <tr>
-          <th class="title" scope="col">Title</th>
-          <th class="author_name" scope="col">Author Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="row">
-          <td class="title">zeroth</td>
-          <td class="author_name empty"></td>
-        </tr>
-        <tr class="row">
-          <td class="title">first</td>
-          <td class="author_name empty"></td>
-        </tr>
-        <tr class="row">
-          <td class="title">second</td>
-          <td class="author_name empty"></td>
-        </tr>
-        <tr class="row">
-          <td class="title">last</td>
-          <td class="author_name empty"></td>
-        </tr>
-      </tbody>
-    end_str
-    assert_html_equal expected, html
-  end
-  
-  def test_should_use_class_from_proxy_reflection_to_generate_columns
-    collection = NoteCollection.new
-    collection.concat(@collection)
-    table = TableHelper::CollectionTable.new(collection)
-    html = table.build
-    
-    expected = <<-end_str
-      <thead>
-        <tr>
-          <th class="title" scope="col">Title</th>
-          <th class="author_name" scope="col">Author Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr class="row">
-          <td class="title">first</td>
-          <td class="author_name empty"></td>
-        </tr>
-        <tr class="row">
-          <td class="title">second</td>
-          <td class="author_name empty"></td>
-        </tr>
-        <tr class="row">
-          <td class="title">last</td>
-          <td class="author_name empty"></td>
-        </tr>
-      </tbody>
-    end_str
-    assert_html_equal expected, html
+    assert_html_equal expected, @table.html
   end
 end

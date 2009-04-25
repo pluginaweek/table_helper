@@ -17,9 +17,7 @@ module TableHelper
   class HtmlElement
     include ActionView::Helpers::TagHelper
     
-    delegate  :[],
-              :[]=,
-                :to => '@html_options'
+    delegate :[], :[]=, :to => '@html_options'
     
     def initialize(html_options = {}) #:nodoc:
       @html_options = html_options.symbolize_keys

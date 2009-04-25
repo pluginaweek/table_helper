@@ -5,8 +5,6 @@ module TableHelper
   class RowBuilder < BlankSlate #:nodoc:
     reveal :respond_to?
     
-    attr_reader :row
-    
     # Creates a builder for the given row
     def initialize(row)
       @row = row
@@ -14,7 +12,7 @@ module TableHelper
     
     # Proxies all missed methods to the row
     def method_missing(*args)
-      row.send(*args)
+      @row.send(*args)
     end
     
     # Defines the builder method for the given cell name.  For example, if
@@ -30,9 +28,9 @@ module TableHelper
       klass.class_eval do
         define_method(method_name) do |*args|
           if args.empty?
-            row.cells[name]
+            @row.cells[name]
           else
-            row.cell(name, *args)
+            @row.cell(name, *args)
           end
         end
       end unless klass.method_defined?(method_name)
@@ -58,9 +56,16 @@ module TableHelper
     # The current cells in this row, in the order in which they will be built
     attr_reader :cells
     
-    def initialize #:nodoc:
-      super
+    # The parent element for this row
+    attr_reader :parent
+    
+    delegate :empty?, :to => :cells
+    delegate :table, :to => :parent
+    
+    def initialize(parent) #:nodoc:
+      super()
       
+      @parent = parent
       @cells = ActiveSupport::OrderedHash.new
       @builder = RowBuilder.new(self)
     end
@@ -69,6 +74,10 @@ module TableHelper
     # accessors for the method.
     def cell(name, *args)
       name = name.to_s if name
+      
+      options = args.last.is_a?(Hash) ? args.pop : {}
+      options[:namespace] = table.object_name
+      args << options
       
       cell = Cell.new(name, *args)
       cells[name] = cell
