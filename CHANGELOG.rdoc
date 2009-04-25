@@ -6,7 +6,7 @@
 * Allow multiple headers to be created at once
 * No longer allow pre-existing headers to be customized (instead must re-define all headers)
 * Remove :header / :footer options
-* Simplify interface
+* Simplify public interface
 
 == 0.1.0 / 2008-12-14
 
