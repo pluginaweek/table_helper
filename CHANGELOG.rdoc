@@ -1,5 +1,7 @@
 == master
 
+== 0.2.0 / 2009-04-25
+
 * Reorganize documentation
 * Allow css classes to be customized
 * Use the jQuery UI css naming convention
