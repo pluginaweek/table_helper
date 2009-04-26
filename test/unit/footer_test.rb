@@ -44,8 +44,8 @@ end
 
 class FooterWithCellsTest < Test::Unit::TestCase
   def setup
-    table = TableHelper::CollectionTable.new([Object.new])
-    @footer = TableHelper::Footer.new(table)
+    @table = TableHelper::CollectionTable.new([Object.new])
+    @footer = TableHelper::Footer.new(@table)
     @cell = @footer.cell :total, 20
   end
   
@@ -58,6 +58,19 @@ class FooterWithCellsTest < Test::Unit::TestCase
       <tfoot>
         <tr>
           <td class="object-total">20</td>
+        </tr>
+      </tfoot>
+    end_str
+    assert_html_equal expected, @footer.html
+  end
+  
+  def test_should_include_colspan_if_more_headers_than_footers
+    @table.header :title, :name, :value
+    
+    expected = <<-end_str
+      <tfoot>
+        <tr>
+          <td class="object-total" colspan="3">20</td>
         </tr>
       </tfoot>
     end_str
