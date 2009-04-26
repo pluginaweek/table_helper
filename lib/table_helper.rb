@@ -197,7 +197,7 @@ module TableHelper
   #   <tfoot>
   #     <tr>
   #       <td class="post-num_comments">0</td>
-  #       <td class="post-num_trackbacks">0</td>
+  #       <td class="post-num_trackbacks" colspan="5">0</td>
   #     </tr>
   #   </tfoot>
   #   <table>

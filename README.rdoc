@@ -144,7 +144,7 @@ these types of tables by DRYing much of the html being generated.
   <tfoot>
     <tr>
       <td class="post-num_comments">0</td>
-      <td class="post-num_trackbacks">0</td>
+      <td class="post-num_trackbacks" colspan="5">0</td>
     </tr>
   </tfoot>
   </table>
