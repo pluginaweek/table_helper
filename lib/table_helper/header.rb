@@ -33,7 +33,17 @@ module TableHelper
       # pre-fill the header with those columns so that the user doesn't
       # have to
       klass = table.klass
-      column(*klass.column_names.map(&:to_sym)) if klass && klass.respond_to?(:column_names)
+      if klass && klass.respond_to?(:column_names)
+        if !table.empty? && klass < ActiveRecord::Base
+          # Make sure only the attributes that have been loaded are used
+          column_names = table.collection.first.attributes.keys
+        else
+          # Assume all attributes are loaded
+          column_names = klass.column_names
+        end
+        
+        column(*column_names.map(&:to_sym))
+      end
       
       @customized = false
     end
