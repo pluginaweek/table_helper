@@ -1,5 +1,7 @@
 == master
 
+== 0.2.1 / 2009-04-25
+
 * Automatically determine the colspan for the last footer to match the number of headers
 * Fix default headers including all model columns when using :select in the collection query
 
