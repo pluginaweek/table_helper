@@ -7,7 +7,8 @@ spec = Gem::Specification.new do |s|
   s.name              = 'table_helper'
   s.version           = '0.2.1'
   s.platform          = Gem::Platform::RUBY
-  s.summary           = 'Adds a helper method for generating HTML tables from collections'
+  s.summary           = 'Adds a helper method for generating HTML tables from collections in Rails'
+  s.description       = s.summary
   
   s.files             = FileList['{lib,test}/**/*'] + %w(CHANGELOG.rdoc init.rb LICENSE Rakefile README.rdoc) - FileList['test/app_root/{log,log/*,script,script/*}']
   s.require_path      = 'lib'
