@@ -1,5 +1,7 @@
 == master
 
+* Release gems via rake-gemcutter instead of rubyforge
+
 == 0.2.1 / 2009-04-25
 
 * Automatically determine the colspan for the last footer to match the number of headers
