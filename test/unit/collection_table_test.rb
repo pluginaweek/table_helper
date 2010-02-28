@@ -62,10 +62,10 @@ end
 
 class CollectionTableTest < Test::Unit::TestCase
   def test_should_accept_block_with_self_as_argument
-    args = nil
-    table = TableHelper::CollectionTable.new([]) {|*args|}
+    @args = nil
+    table = TableHelper::CollectionTable.new([]) {|*args| @args = args}
     
-    assert_equal [table], args
+    assert_equal [table], @args
   end
 end
 

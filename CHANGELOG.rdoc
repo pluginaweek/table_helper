@@ -1,5 +1,6 @@
 == master
 
+* Fix TableHelper::RowBuilder failing on Ruby 1.9.1
 * Release gems via rake-gemcutter instead of rubyforge
 
 == 0.2.1 / 2009-04-25

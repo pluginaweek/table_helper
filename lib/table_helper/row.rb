@@ -3,7 +3,7 @@ require 'table_helper/cell'
 module TableHelper
   # Provides a blank class that can be used to build the cells for a row
   class RowBuilder < BlankSlate #:nodoc:
-    reveal :respond_to?
+    reveal :respond_to? if find_hidden_method(:respond_to?)
     
     # Creates a builder for the given row
     def initialize(row)

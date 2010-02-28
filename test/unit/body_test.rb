@@ -110,14 +110,14 @@ class BodyWithCollectionTest < Test::Unit::TestCase
   end
   
   def test_should_build_row_using_object_location_for_default_index
-    build_post = nil
-    index = nil
-    @body.each {|row, build_post, index|}
+    @build_post = nil
+    @index = nil
+    @body.each {|row, build_post, index| @build_post, @index = build_post, index}
     
     @collection.each do |post|
       html = @body.build_row(post) 
-      assert_equal post, build_post
-      assert_equal @collection.index(post), index
+      assert_equal post, @build_post
+      assert_equal @collection.index(post), @index
       
       expected = <<-end_str
         <tr class="post ui-collection-result">
@@ -129,13 +129,13 @@ class BodyWithCollectionTest < Test::Unit::TestCase
   end
   
   def test_should_build_row_using_custom_value_for_index
-    post = nil
-    index = nil
-    @body.each {|row, post, index|}
+    @post = nil
+    @index = nil
+    @body.each {|row, post, index| @post, @index = post, index}
     
     html = @body.build_row(@collection.first, 1)
-    assert_equal @collection.first, post
-    assert_equal 1, index
+    assert_equal @collection.first, @post
+    assert_equal 1, @index
     
     expected = <<-end_str
       <tr class="post ui-collection-result">
