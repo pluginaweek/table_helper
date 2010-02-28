@@ -76,6 +76,23 @@ class FooterWithCellsTest < Test::Unit::TestCase
     end_str
     assert_html_equal expected, @footer.html
   end
+  
+  def test_should_include_colspan_on_last_cell_if_more_headers_than_footers
+    @table.header :title, :name, :description, :value, :created_at, :updated_at
+    @footer.cell :average, 5, :colspan => 2
+    @footer.cell :stdev, 1
+    
+    expected = <<-end_str
+      <tfoot>
+        <tr>
+          <td class="object-total">20</td>
+          <td class="object-average" colspan="2">5</td>
+          <td class="object-stdev" colspan="3">1</td>
+        </tr>
+      </tfoot>
+    end_str
+    assert_html_equal expected, @footer.html
+  end
 end
 
 class FooterWithEmptyCollectionTest < Test::Unit::TestCase

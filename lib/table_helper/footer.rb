@@ -27,7 +27,7 @@ module TableHelper
     def html #:nodoc:
       # Force the last cell to span the remaining columns
       cells = row.cells.values
-      colspan = table.header.columns.length - cells[0..-2].inject(0) {|count, (name, cell)| count += (cell[:colspan] || 1).to_i}
+      colspan = table.header.columns.length - cells[0..-2].inject(0) {|count, cell| count += (cell[:colspan] || 1).to_i}
       cells.last[:colspan] ||= colspan if colspan > 1
       
       html_options = @html_options.dup
