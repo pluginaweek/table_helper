@@ -1,5 +1,7 @@
 == master
 
+== 0.2.2 / 2010-03-07
+
 * Fix footer failing to render when there are multiple cells [Richard Luther]
 * Fix TableHelper::RowBuilder failing on Ruby 1.9.1
 * Release gems via rake-gemcutter instead of rubyforge
