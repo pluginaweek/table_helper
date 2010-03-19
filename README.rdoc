@@ -6,7 +6,7 @@
 
 API
 
-* http://api.pluginaweek.org/table_helper
+* http://rdoc.info/projects/pluginaweek/table_helper
 
 Bugs
 
