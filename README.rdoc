@@ -6,7 +6,7 @@
 
 API
 
-* http://rdoc.info/projects/pluginaweek/table_helper
+* http://rdoc.info/github/pluginaweek/table_helper/master/frames
 
 Bugs
 
