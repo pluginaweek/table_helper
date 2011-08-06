@@ -1,4 +1,4 @@
-= table_helper
+= table_helper http://travis-ci.org/pluginaweek/table_helper.png
 
 +table_helper+ adds a helper method for generating HTML tables from collections.
 
@@ -15,6 +15,10 @@ Bugs
 Development
 
 * http://github.com/pluginaweek/table_helper
+
+Testing
+
+* http://travis-ci.org/pluginaweek/table_helper
 
 Source
 
