@@ -10,7 +10,7 @@ API
 
 Bugs
 
-* http://pluginaweek.lighthouseapp.com/projects/13290-table_helper
+* http://github.com/pluginaweek/table_helper/issues
 
 Development
 
