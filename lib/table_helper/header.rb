@@ -94,7 +94,7 @@ module TableHelper
       html_options = @html_options.dup
       html_options[:style] = 'display: none;' if table.empty? && hide_when_empty
       
-      content_tag(tag_name, content, html_options)
+      content_tag(tag_name, content, html_options, false)
     end
     
     private
