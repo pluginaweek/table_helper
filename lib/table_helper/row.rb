@@ -1,18 +1,14 @@
 require 'table_helper/cell'
+require 'delegate'
 
 module TableHelper
   # Provides a blank class that can be used to build the cells for a row
-  class RowBuilder < BlankSlate #:nodoc:
-    reveal :respond_to? if find_hidden_method(:respond_to?)
+  class RowBuilder < SimpleDelegator #:nodoc:
 
     # Creates a builder for the given row
     def initialize(row)
       @row = row
-    end
-
-    # Proxies all missed methods to the row
-    def method_missing(*args)
-      @row.send(*args)
+      super
     end
 
     # Defines the builder method for the given cell name.  For example, if
