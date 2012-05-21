@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class TableHelperTest < ActionView::TestCase
+  class << Rails
+    undef application # Avoid silly Rails bug: https://github.com/rails/rails/pull/6429
+  end
+
   tests TableHelper
 
   class Post

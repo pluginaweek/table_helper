@@ -1,11 +1,12 @@
 # Load the plugin testing framework
-$:.unshift("#{File.dirname(__FILE__)}/../../plugin_test_helper/lib")
-require 'rubygems'
-require 'plugin_test_helper'
-
-# Run the migrations
-ActiveRecord::Migrator.migrate("#{Rails.root}/db/migrate")
-
+$:.unshift("#{File.dirname(__FILE__)}/../lib")
+require 'rails'
+require 'active_support'
+require 'active_record'
+require 'action_view'
+require 'action_controller'
+require 'table_helper'
+require 'test/unit'
 Test::Unit::TestCase.class_eval do
   private
     def assert_html_equal(expected, actual)

@@ -250,21 +250,3 @@ class HeaderWithCustomHtmlOptionsTest < Test::Unit::TestCase
     assert_html_equal expected, @header.html
   end
 end
-
-class HeaderWithModelsTest < ActiveRecord::TestCase
-  def setup
-    Person.create(:first_name => 'John', :last_name => 'Smith')
-  end
-
-  def test_should_include_all_columns_if_not_selecting_columns
-    table = TableHelper::CollectionTable.new(Person.all)
-    @header = TableHelper::Header.new(table)
-    assert_equal %w(first_name id last_name), @header.column_names.sort
-  end
-
-  def test_should_only_include_selected_columns_if_specified_in_query
-    table = TableHelper::CollectionTable.new(Person.all(:select => 'first_name'))
-    @header = TableHelper::Header.new(table)
-    assert_equal %w(first_name), @header.column_names.sort
-  end
-end
