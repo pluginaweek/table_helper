@@ -78,7 +78,7 @@ these types of tables by DRYing much of the html being generated.
       t.header :publish_date, 'Date<br \>Published'
       t.header :num_comments, '# Comments'
       t.header :num_trackbacks, '# Trackbacks'
-      
+
       t.rows.alternate = :odd
       t.rows.each do |row, post, index|
         # Notice there's no need to explicitly define the title
@@ -88,7 +88,7 @@ these types of tables by DRYing much of the html being generated.
         row.num_comments   post.comments.empty? ? '-' : post.comments.size
         row.num_trackbacks post.trackbacks.empty? ? '-' : post.trackbacks.size
       end
-      
+
       t.footer :num_comments, @posts.inject(0) {|sum, post| sum += post.comments.size}
       t.footer :num_trackbacks, @posts.inject(0) {|sum, post| sum += post.trackbacks.size}
     end

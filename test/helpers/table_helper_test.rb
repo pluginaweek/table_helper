@@ -2,10 +2,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
 class TableHelperTest < ActionView::TestCase
   tests TableHelper
-  
+
   class Post
   end
-  
+
   def test_should_build_collection_table
     html = collection_table(['first', 'second', 'last'], Post) do |t|
       t.header :title
@@ -14,7 +14,7 @@ class TableHelperTest < ActionView::TestCase
       end
       t.footer :total, t.collection.length
     end
-    
+
     expected = <<-end_str
       <table cellpadding="0" cellspacing="0" class="posts ui-collection">
         <thead>

@@ -5,19 +5,19 @@ class FooterByDefaultTest < Test::Unit::TestCase
     @table = TableHelper::CollectionTable.new([])
     @footer = TableHelper::Footer.new(@table)
   end
-  
+
   def test_should_hide_when_empty
     assert @footer.hide_when_empty
   end
-  
+
   def test_should_be_empty
     assert @footer.empty?
   end
-  
+
   def test_should_have_a_row
     assert_not_nil @footer.row
   end
-  
+
   def test_should_have_a_table
     assert_equal @table, @footer.table
   end
@@ -28,10 +28,10 @@ class FooterTest < Test::Unit::TestCase
     table = TableHelper::CollectionTable.new([Object.new])
     @footer = TableHelper::Footer.new(table)
   end
-  
+
   def test_should_include_custom_attributes
     @footer[:class] = 'pretty'
-    
+
     expected = <<-end_str
       <tfoot class="pretty">
         <tr>
@@ -48,11 +48,11 @@ class FooterWithCellsTest < Test::Unit::TestCase
     @footer = TableHelper::Footer.new(@table)
     @cell = @footer.cell :total, 20
   end
-  
+
   def test_should_namespace_cell_classes
     assert_equal 'object-total', @cell[:class]
   end
-  
+
   def test_should_build_html
     expected = <<-end_str
       <tfoot>
@@ -63,10 +63,10 @@ class FooterWithCellsTest < Test::Unit::TestCase
     end_str
     assert_html_equal expected, @footer.html
   end
-  
+
   def test_should_include_colspan_if_more_headers_than_footers
     @table.header :title, :name, :value
-    
+
     expected = <<-end_str
       <tfoot>
         <tr>
@@ -76,12 +76,12 @@ class FooterWithCellsTest < Test::Unit::TestCase
     end_str
     assert_html_equal expected, @footer.html
   end
-  
+
   def test_should_include_colspan_on_last_cell_if_more_headers_than_footers
     @table.header :title, :name, :description, :value, :created_at, :updated_at
     @footer.cell :average, 5, :colspan => 2
     @footer.cell :stdev, 1
-    
+
     expected = <<-end_str
       <tfoot>
         <tr>
@@ -100,10 +100,10 @@ class FooterWithEmptyCollectionTest < Test::Unit::TestCase
     table = TableHelper::CollectionTable.new([])
     @footer = TableHelper::Footer.new(table)
   end
- 
+
   def test_should_not_display_if_hide_when_empty
     @footer.hide_when_empty = true
-    
+
     expected = <<-end_str
       <tfoot style="display: none;">
         <tr>
@@ -112,10 +112,10 @@ class FooterWithEmptyCollectionTest < Test::Unit::TestCase
     end_str
     assert_html_equal expected, @footer.html
   end
-  
+
   def test_should_display_if_not_hide_when_empty
     @footer.hide_when_empty = false
-    
+
     expected = <<-end_str
       <tfoot>
         <tr>
