@@ -25,7 +25,7 @@ module TableHelper
     
     # Generates the html representing this element
     def html
-      content_tag(tag_name, content, @html_options)
+      content_tag(tag_name, content, @html_options, false)
     end
     
     private
