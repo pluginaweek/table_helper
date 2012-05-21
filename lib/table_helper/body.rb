@@ -89,7 +89,7 @@ module TableHelper
       end
 
       def content
-        content = ''
+        content = TableHelper.new_safe_buffer
 
         if table.empty? && @empty_caption
           # No objects to display

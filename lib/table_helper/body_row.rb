@@ -55,7 +55,7 @@ module TableHelper
       def content
         number_to_skip = 0 # Keeps track of the # of columns to skip
 
-        html = ''
+        html = TableHelper.new_safe_buffer
         table.header.column_names.each do |column|
           number_to_skip -= 1 and next if number_to_skip > 0
 

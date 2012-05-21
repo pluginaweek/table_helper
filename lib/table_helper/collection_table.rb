@@ -128,7 +128,7 @@ module TableHelper
       end
 
       def content
-        content = ''
+        content = TableHelper.new_safe_buffer
         content << @header.html unless @header.empty?
         content << @rows.html
         content << @footer.html unless @footer.empty?

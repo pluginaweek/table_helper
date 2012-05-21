@@ -100,7 +100,7 @@ module TableHelper
       end
 
       def content
-        cells.values.map(&:html).join
+        cells.values.map(&:html).inject(TableHelper.new_safe_buffer, :<<)
       end
   end
 end

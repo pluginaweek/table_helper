@@ -204,6 +204,17 @@ module TableHelper
   def collection_table(collection, klass = nil, html_options = {}, &block)
     CollectionTable.new(collection, klass, html_options, &block).html
   end
+
+  if ''.respond_to?(:html_safe?)
+    def self.new_safe_buffer
+      ''.html_safe
+    end
+  else
+    def self.new_safe_buffer
+      ''
+    end
+  end
+
 end
 
 ActionController::Base.class_eval do
