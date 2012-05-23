@@ -2,6 +2,8 @@
 
 +table_helper+ adds a helper method for generating HTML tables from collections.
 
+Now compatible with Rails 3.
+
 == Resources
 
 API
@@ -167,12 +169,11 @@ If this is not the case, you may want to stick to using actual html.
 
 == Testing
 
-Before you can run any tests, the following gem must be installed:
-* plugin_test_helper[http://github.com/pluginaweek/plugin_test_helper]
+To run against a specific version of Rails, use bundler:
 
-To run against a specific version of Rails:
-
-  rake test RAILS_FRAMEWORK_ROOT=/path/to/rails
+  # edit Gemfile
+  bundle install
+  bundle exec rake test
 
 == Dependencies
 
